@@ -164,7 +164,7 @@
 
         .search-box input {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            padding: 16px 100px 16px 50px;
             font-size: 1rem;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
@@ -186,6 +186,25 @@
             transform: translateY(-50%);
             color: #718096;
             font-size: 1.2rem;
+        }
+
+        .search-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-button:hover {
+            background: #3182ce;
         }
 
         .search-note {
@@ -386,6 +405,15 @@
             .theme-card {
                 padding: 24px 20px;
             }
+
+            .search-box input {
+                padding: 16px 80px 16px 40px;
+            }
+
+            .search-button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
         }
 
         /* アニメーション */
@@ -435,6 +463,7 @@
             <div class="search-box">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput" placeholder="キーワードを入力してサイト内を検索..." />
+                <button class="search-button" onclick="performSearchAction()">検索</button>
             </div>
             <p class="search-note">※ 地名、神社名、人名、時代名などで検索できます</p>
         </section>
@@ -489,23 +518,117 @@
     </div>
 
     <script>
+        // 検索機能の実装
+        const searchData = {
+            'index.html': {
+                title: 'トップページ - 阿波古代史をAIに調査してもらった',
+                content: `阿波古代史 AI調査 研究サイト 古代阿波国 徳島県 忌部氏 文献調査 地理的分析 宗教史的考察 
+                奈良県 京都府 阿波関連地名 神社 歴史的起源 畿内地域 中央政権 地理的観点 宗教的観点
+                波爾布神社 阿波 歴史的宗教的結合 祭神 創建伝承 文献史料 宗教的アイデンティティ 神社信仰
+                古事記 日本書紀 考古学的証拠 文献史料 阿波忌部氏 中央政界 古代交通路 文化伝播 上一宮大粟神社`
+            },
+            'nara-kyoto-awa.html': {
+                title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
+                content: `奈良県 京都府 阿波関連地名 神社 歴史的起源 忌部氏 組織的文化伝播 斑鳩町 阿波地区 率川阿波神社
+                城陽市 精神社 延喜式内社 古代阿波国 徳島県 畿内 戦略的移住 文化的結びつき 聖徳太子 斑鳩宮 法隆寺
+                事代主神 恵比寿神 藤原是公 神階 朝廷 公式認定 少彦名命 農業 医療 国土開発 東阿波型土器 古墳時代`
+            },
+            'harifu-shrine.html': {
+                title: '波爾布神社と阿波の歴史的宗教的結合',
+                content: `波爾布神社 はにふじんじゃ 滋賀県高島市 阿波地域 関係 奈良時代 神霊勧請 歴史的結合 741年 天平13年
+                阿波国 御祭神 地域間宗教ネットワーク 彦都波乃賣命 波爾山毘賣命 二柱体制 1300年 精神的結合
+                建嶋女祖命神社 徳島県小松島市 那賀郡 橘諸兄 神輿 神田二町 寄進 宗教儀礼 神霊移転`
+            }
+        };
+
+        function performSearch(query) {
+            if (!query.trim()) return [];
+            
+            const results = [];
+            const searchTerms = query.toLowerCase().split(/\s+/);
+            
+            Object.entries(searchData).forEach(([page, data]) => {
+                const content = data.content.toLowerCase();
+                const title = data.title.toLowerCase();
+                let score = 0;
+                const matches = [];
+                
+                searchTerms.forEach(term => {
+                    const titleMatches = (title.match(new RegExp(term, 'g')) || []).length;
+                    const contentMatches = (content.match(new RegExp(term, 'g')) || []).length;
+                    
+                    if (titleMatches > 0) {
+                        score += titleMatches * 3; // タイトルマッチは高スコア
+                        matches.push(`タイトル: ${term}`);
+                    }
+                    if (contentMatches > 0) {
+                        score += contentMatches;
+                        matches.push(`内容: ${term}`);
+                    }
+                });
+                
+                if (score > 0) {
+                    results.push({
+                        page: page,
+                        title: data.title,
+                        score: score,
+                        matches: matches
+                    });
+                }
+            });
+            
+            return results.sort((a, b) => b.score - a.score);
+        }
+
+        function displaySearchResults(results, query) {
+            if (results.length === 0) {
+                alert(`"${query}" に関する検索結果が見つかりませんでした。\n\n検索のヒント:\n• 「忌部」「阿波」「神社」「古代」などのキーワードを試してください\n• 複数の単語で検索する場合はスペースで区切ってください`);
+                return;
+            }
+            
+            let message = `"${query}" の検索結果 (${results.length}件):\n\n`;
+            
+            results.slice(0, 5).forEach((result, index) => {
+                message += `${index + 1}. ${result.title}\n`;
+                message += `   関連度: ${'★'.repeat(Math.min(5, Math.ceil(result.score / 3)))}\n`;
+                if (result.page !== 'index.html') {
+                    message += `   → このページを開く: ${result.page}\n`;
+                }
+                message += '\n';
+            });
+            
+            if (results.length > 5) {
+                message += `...他${results.length - 5}件の結果があります\n`;
+            }
+            
+            const shouldNavigate = confirm(message + '\n最も関連度の高いページを開きますか？');
+            
+            if (shouldNavigate && results[0].page !== 'index.html') {
+                window.location.href = results[0].page;
+            }
+        }
+
+        function performSearchAction() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                const results = performSearch(query);
+                displaySearchResults(results, query);
+            }
+        }
+
+        // 検索機能のイベントリスナー
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearchAction();
+            }
+        });
+
         // フェードインアニメーション
         document.addEventListener('DOMContentLoaded', function() {
             const elements = document.querySelectorAll('.fade-in');
             elements.forEach((el, index) => {
                 el.style.animationDelay = `${index * 0.1}s`;
             });
-        });
-
-        // 検索機能（基本実装）
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const query = this.value.trim();
-                if (query) {
-                    // 実際の検索実装では、ここでページコンテンツを検索
-                    alert(`"${query}" の検索機能は実装予定です。\n\n検索対象:\n• 奈良・京都の阿波関連地名と神社\n• 波爾布神社と阿波の歴史的結合\n• その他のサイト内コンテンツ`);
-                }
-            }
         });
 
         // パララックス効果
