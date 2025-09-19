@@ -344,6 +344,16 @@
             background: #cbd5e0;
         }
 
+        /* 検索ハイライト */
+        mark {
+            background: #fef08a !important;
+            color: #1a202c !important;
+            font-weight: 600 !important;
+            padding: 2px 4px !important;
+            border-radius: 3px !important;
+            box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2) !important;
+        }
+
         /* コンテンツエリア */
         .content {
             background: #ffffff;
@@ -845,16 +855,44 @@
                     
                     // 検索語をハイライト（改善版）
                     const searchTerms = query.toLowerCase().split(/\s+/);
+                    console.log('ハイライト対象語:', searchTerms);
+                    const originalContent = content;
+
                     searchTerms.forEach(term => {
                         if (term.length > 1) {
-                            const regex = new RegExp(`(${term})`, 'gi');
-                            content = content.replace(regex, '<mark style="background: linear-gradient(90deg, #fbbf24, #f59e0b); color: #1a202c; font-weight: 700; padding: 2px 4px; border-radius: 3px; box-shadow: 0 1px 2px rgba(245, 158, 11, 0.3);">$1</mark>');
+                            // 特殊文字をエスケープ
+                            const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                            const beforeReplace = content;
+                            content = content.replace(regex, '<mark>$1</mark>');
+                            if (beforeReplace !== content) {
+                                console.log(`"${term}" をハイライト適用: ${beforeReplace.length} → ${content.length}`);
+                            }
                         }
                     });
+
+                    if (originalContent !== content) {
+                        console.log('ハイライト適用後のコンテンツサンプル:', content.substring(0, 100) + '...');
+                    }
                     
-                    // 内容を適切な長さに切り詰め
-                    if (content.length > 200) {
-                        content = content.substring(0, 200) + '...';
+                    // 内容を適切な長さに切り詰め（HTMLタグを考慮）
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content;
+                    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+
+                    if (textContent.length > 300) {
+                        // プレーンテキストで300文字に制限してから、再度ハイライト適用
+                        const truncatedText = textContent.substring(0, 300) + '...';
+                        content = truncatedText;
+
+                        // 再度ハイライト適用
+                        searchTerms.forEach(term => {
+                            if (term.length > 1) {
+                                const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                                content = content.replace(regex, '<mark>$1</mark>');
+                            }
+                        });
                     }
                     
                     bodyHTML += `<p>${content}</p>`;
