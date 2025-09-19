@@ -214,6 +214,136 @@
             color: #718096;
         }
 
+        /* 検索結果モーダル */
+        .search-results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-results-content {
+            background: white;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-results-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .search-results-header h3 {
+            margin: 0;
+            padding: 0;
+            color: #1a202c;
+            font-size: 1.25rem;
+        }
+
+        .search-results-header::before {
+            display: none;
+        }
+
+        .close-button {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+            padding: 0;
+            margin-top: -4px;
+        }
+
+        .close-button:hover {
+            color: #2d3748;
+        }
+
+        .search-result-item {
+            padding: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .result-score {
+            color: #ed8936;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .result-snippet {
+            background: #f7fafc;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid #4299e1;
+            margin-bottom: 12px;
+        }
+
+        .result-snippet h4 {
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-snippet p {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .result-action-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .result-action-btn:hover {
+            background: #3182ce;
+        }
+
+        .result-action-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .result-action-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
         /* コンテンツエリア */
         .content {
             background: #ffffff;
@@ -363,7 +493,7 @@
             .hero {
                 height: 100vh;
                 min-height: 500px;
-                background-attachment: scroll; /* モバイルでのパフォーマンス向上 */
+                background-attachment: scroll;
             }
 
             .hero h1 {
@@ -413,6 +543,19 @@
             .search-button {
                 padding: 6px 10px;
                 font-size: 0.8rem;
+            }
+
+            .search-results-content {
+                margin: 10px;
+                max-height: 90vh;
+            }
+
+            .search-results-header {
+                padding: 16px;
+            }
+
+            .search-result-item {
+                padding: 16px;
             }
         }
 
@@ -517,32 +660,96 @@
         </section>
     </div>
 
+    <!-- 検索結果モーダル -->
+    <div class="search-results-modal" id="searchModal">
+        <div class="search-results-content">
+            <div class="search-results-header">
+                <button class="close-button" onclick="closeSearchModal()">&times;</button>
+                <h3 id="searchResultsTitle">検索結果</h3>
+            </div>
+            <div id="searchResultsBody">
+                <!-- 検索結果がここに表示される -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // 検索機能の実装
         const searchData = {
             'index.html': {
                 title: 'トップページ - 阿波古代史をAIに調査してもらった',
-                content: `阿波古代史 AI調査 研究サイト 古代阿波国 徳島県 忌部氏 斎部氏 文献調査 地理的分析 宗教史的考察
-                奈良県 京都府 阿波関連地名 神社 歴史的起源 畿内地域 中央政権 地理的観点 宗教的観点
-                波爾布神社 阿波 歴史的宗教的結合 祭神 創建伝承 文献史料 宗教的アイデンティティ 神社信仰
-                古事記 日本書紀 考古学的証拠 文献史料 阿波忌部氏 中央政界 古代交通路 文化伝播 上一宮大粟神社
-                研究テーマ 調査 分析 新たな知見 発見 Claude Anthropic`
+                sections: [
+                    {
+                        title: 'サイト概要',
+                        content: '古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト。Claude（Anthropic社製AI）を研究パートナーとして、阿波忌部氏、斎部氏による組織的文化伝播を調査。'
+                    },
+                    {
+                        title: 'AI活用による歴史研究',
+                        content: '従来の文献史学に加え、AI技術による大量データの分析と新たな視点の提供により、これまで見過ごされていた歴史的連関の発見を目指しています。'
+                    },
+                    {
+                        title: '研究方法',
+                        content: '多角的文献調査（古代から近世までの史料を横断的に分析）、地理的分布分析（GIS的手法による地名・神社の空間的パターン解析）、比較宗教史的考察、AI支援による仮説生成。'
+                    },
+                    {
+                        title: '今後の展開予定',
+                        content: '阿波忌部氏と中央政界での活動、古事記・日本書紀における阿波関連記述の分析、考古学的証拠と文献史料の統合的検討、阿波国の古代交通路と文化伝播。'
+                    }
+                ]
             },
             'nara-kyoto-awa.html': {
                 title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
-                content: `奈良県 京都府 阿波関連地名 神社 歴史的起源 忌部氏 斎部氏 組織的文化伝播 斑鳩町 阿波地区 率川阿波神社
-                城陽市 精神社 延喜式内社 古代阿波国 徳島県 畿内 戦略的移住 文化的結びつき 聖徳太子 斑鳩宮 法隆寺
-                事代主神 恵比寿神 藤原是公 神階 朝廷 公式認定 少彦名命 農業 医療 国土開発 東阿波型土器 古墳時代
-                地名学 考古学 辰砂 水銀朱 若杉山遺跡 黒谷川郡頭遺跡 加茂宮前遺跡 製鉄 鉄器 結晶片岩 石室建設
-                古語拾遺 斎部広成 天富命 天日鷲命 延喜式 大嘗祭 麁服 麻布 瀬戸内海航路 河内湖 古代大和川`
+                sections: [
+                    {
+                        title: '斑鳩町阿波地区の詳細分析',
+                        content: '生駒郡斑鳩町内で阿波1丁目から3丁目および阿波大字として行政区画に正式記録。聖徳太子の斑鳩宮（602年建立）および法隆寺の近隣に位置し、古代における重要な文化的拠点との地理的関連性を示している。'
+                    },
+                    {
+                        title: '率川阿波神社の歴史',
+                        content: '奈良市の率川神社境内に位置し、延喜式神名帳（927年）に正式記録された官社。宝亀年間（770-780年）に藤原是公によって創建され、事代主神（恵比寿神）を阿波国から勧請。文徳実録（879年）において従五位下の神階を授与。'
+                    },
+                    {
+                        title: '城陽市精神社の研究',
+                        content: '京都府城陽市の延喜式神名帳記載の式内社。主祭神は少彦名命（農業・医療・国土開発の神）。「精」（awa）という神社名は阿波国の「阿波」（awa）と同一語源。城陽市周辺で東阿波型土器が出土し、古墳時代における阿波系住民の移住を物的に証明。'
+                    },
+                    {
+                        title: '忌部氏による文化伝播',
+                        content: '古語拾遺（807年、斎部広成著）に天富命が諸斎部を率いて東国に赴き、房総半島に安房国を建設と明記。天岩戸神話で天日鷲命が神聖な繊維（木綿）を創出。延喜式（927年）に阿波忌部氏の継続的貢納義務が詳細記録。'
+                    },
+                    {
+                        title: '考古学的証拠',
+                        content: '若杉山遺跡（徳島県）の辰砂（水銀朱）が大和の主要古墳で発見。黒谷川郡頭遺跡は1-3世紀の大規模交易拠点。加茂宮前遺跡は古代日本最大の製鉄遺跡。結晶片岩による石室建設技術が玉手山古墳群、松ヶ山古墳で使用。'
+                    },
+                    {
+                        title: '古代交通網',
+                        content: '瀬戸内海航路：阿波→淡路島→大阪湾→河内湖→古代大和川→奈良盆地。阿波系土器（東阿波式土器）の密集分布が確認。準構造船による組織的海上輸送、吉野川水系による山間部資源の効率的運搬。'
+                    }
+                ]
             },
             'harifu-shrine.html': {
                 title: '波爾布神社と阿波の歴史的宗教的結合',
-                content: `波爾布神社 はにふじんじゃ 滋賀県高島市 阿波地域 関係 奈良時代 神霊勧請 歴史的結合 741年 天平13年
-                阿波国 御祭神 地域間宗教ネットワーク 彦都波乃賣命 波爾山毘賣命 二柱体制 1300年 精神的結合
-                建嶋女祖命神社 徳島県小松島市 那賀郡 橘諸兄 神輿 神田二町 寄進 宗教儀礼 神霊移転 聖武天皇
-                国分寺 国分尼寺 琵琶湖水運 古津 湖上渡御 筑摩神社 古墳 銅鏡 土器 忌部氏宗教ネットワーク
-                大麻比古神社 忌部神社 朝廷祭祀 丑の祭 農事歴 海洋祭祀 後土御門天皇 源義家`
+                sections: [
+                    {
+                        title: '741年の神霊勧請記録',
+                        content: '741年（天平13年）聖武天皇の治世において、阿波国那賀郡（現在の徳島県小松島市）にある建嶋女祖命神社から波爾山毘賣命を勧請。橘諸兄の支援のもと、神輿と神田二町の寄進を伴う正式な宗教儀礼として神霊移転が実行。'
+                    },
+                    {
+                        title: '1300年の精神的結合',
+                        content: '彦都波乃賣命と阿波から迎えた波爾山毘賣命の両神を祀る二柱体制を維持し、1300年にわたって両地域の精神的結合を象徴。延喜式神名帳（927年編纂）において、両神社がともに式内社として公式認定。'
+                    },
+                    {
+                        title: '地理的・文化的結合',
+                        content: '高島郡は琵琶湖水運の要衝として機能し、四国から中央日本への移住ルートの中継点。古代「古津（こふる）」と呼ばれた港湾地帯に位置し、湖上渡御の祭礼を通じて対岸の筑摩神社との宗教的交流を維持。古墳の上に建立され、1931年の調査で銅鏡・土器類が出土。'
+                    },
+                    {
+                        title: '忌部氏宗教ネットワーク',
+                        content: '忌部氏による宗教ネットワークが波爾布神社と阿波との結合に重要な役割。忌部氏は阿波地域で大麻比古神社・忌部神社を拠点とし、朝廷祭祀を担当する有力氏族。波爾山毘賣命の神名は水・波、山・大地・高所、毘賣・女神を表し、水と山の融合した女神格。'
+                    },
+                    {
+                        title: '文化的影響と継承',
+                        content: '現在の本殿は元和10年（1624年）の建立で四国地方の建築様式の影響。地下での護摩焚きと読経を行う構造は山岳宗教と神仏習合の要素。「丑の祭」として知られる旧暦2月最初の丑日の祭礼は阿波地域の農事歴と同期。明応5年（1496年）の後土御門天皇による再建勅令、源義家による奉納（1088年）など皇室・武家による継続的支援。'
+                    }
+                ]
             }
         };
 
@@ -553,36 +760,61 @@
             const searchTerms = query.toLowerCase().split(/\s+/);
             
             Object.entries(searchData).forEach(([page, data]) => {
-                const content = data.content.toLowerCase();
-                const title = data.title.toLowerCase();
-                let score = 0;
-                const matches = [];
+                const pageResults = [];
                 
+                // タイトル検索
+                const titleLower = data.title.toLowerCase();
+                let titleScore = 0;
                 searchTerms.forEach(term => {
-                    const titleMatches = (title.match(new RegExp(term, 'g')) || []).length;
-                    const contentMatches = (content.match(new RegExp(term, 'g')) || []).length;
+                    const matches = (titleLower.match(new RegExp(term, 'g')) || []).length;
+                    titleScore += matches * 5; // タイトルマッチは最高スコア
+                });
+                
+                if (titleScore > 0) {
+                    pageResults.push({
+                        type: 'title',
+                        title: data.title,
+                        content: data.title,
+                        score: titleScore
+                    });
+                }
+                
+                // セクション検索
+                data.sections.forEach(section => {
+                    const sectionTitleLower = section.title.toLowerCase();
+                    const sectionContentLower = section.content.toLowerCase();
+                    let sectionScore = 0;
                     
-                    if (titleMatches > 0) {
-                        score += titleMatches * 3; // タイトルマッチは高スコア
-                        matches.push(`タイトル: ${term}`);
-                    }
-                    if (contentMatches > 0) {
-                        score += contentMatches;
-                        matches.push(`内容: ${term}`);
+                    searchTerms.forEach(term => {
+                        const titleMatches = (sectionTitleLower.match(new RegExp(term, 'g')) || []).length;
+                        const contentMatches = (sectionContentLower.match(new RegExp(term, 'g')) || []).length;
+                        
+                        sectionScore += titleMatches * 3; // セクションタイトルマッチ
+                        sectionScore += contentMatches; // セクション内容マッチ
+                    });
+                    
+                    if (sectionScore > 0) {
+                        pageResults.push({
+                            type: 'section',
+                            title: section.title,
+                            content: section.content,
+                            score: sectionScore
+                        });
                     }
                 });
                 
-                if (score > 0) {
+                if (pageResults.length > 0) {
+                    const totalScore = pageResults.reduce((sum, result) => sum + result.score, 0);
                     results.push({
                         page: page,
-                        title: data.title,
-                        score: score,
-                        matches: matches
+                        pageTitle: data.title,
+                        results: pageResults.sort((a, b) => b.score - a.score),
+                        totalScore: totalScore
                     });
                 }
             });
             
-            return results.sort((a, b) => b.score - a.score);
+            return results.sort((a, b) => b.totalScore - a.totalScore);
         }
 
         function displaySearchResults(results, query) {
@@ -591,61 +823,82 @@
                 return;
             }
 
-            // 検索結果が1件の場合は直接遷移
-            if (results.length === 1 && results[0].page !== 'index.html') {
-                const result = results[0];
-                const shouldNavigate = confirm(`検索結果: ${result.title}\n\nこのページを開きますか？`);
-                if (shouldNavigate) {
-                    console.log('単一結果の遷移:', result.page);
-                    try {
-                        window.location.href = result.page;
-                    } catch (error) {
-                        console.error('遷移エラー:', error);
-                        // 代替手段: 新しいタブで開く
-                        window.open(result.page, '_blank');
+            const modal = document.getElementById('searchModal');
+            const title = document.getElementById('searchResultsTitle');
+            const body = document.getElementById('searchResultsBody');
+            
+            title.textContent = `"${query}" の検索結果 (${results.length}ページ)`;
+            
+            let bodyHTML = '';
+            
+            results.forEach((pageResult, pageIndex) => {
+                bodyHTML += `<div class="search-result-item">`;
+                bodyHTML += `<div class="result-title">${pageResult.pageTitle}</div>`;
+                bodyHTML += `<div class="result-score">総合関連度: ${'★'.repeat(Math.min(5, Math.ceil(pageResult.totalScore / 5)))}</div>`;
+                
+                // 各セクションの結果を表示
+                pageResult.results.slice(0, 3).forEach(sectionResult => {
+                    bodyHTML += `<div class="result-snippet">`;
+                    bodyHTML += `<h4>${sectionResult.title}</h4>`;
+                    
+                    let content = sectionResult.content;
+                    
+                    // 検索語をハイライト
+                    const searchTerms = query.toLowerCase().split(/\s+/);
+                    searchTerms.forEach(term => {
+                        if (term.length > 1) {
+                            const regex = new RegExp(`(${term})`, 'gi');
+                            content = content.replace(regex, '<mark style="background: #fef5e7; color: #c05621; font-weight: 600;">$1</mark>');
+                        }
+                    });
+                    
+                    // 内容を適切な長さに切り詰め
+                    if (content.length > 200) {
+                        content = content.substring(0, 200) + '...';
                     }
+                    
+                    bodyHTML += `<p>${content}</p>`;
+                    bodyHTML += `</div>`;
+                });
+                
+                // アクションボタン
+                bodyHTML += `<div class="result-actions">`;
+                if (pageResult.page !== 'index.html') {
+                    bodyHTML += `<button class="result-action-btn" onclick="navigateToPage('${pageResult.page}')">このページを開く</button>`;
                 }
-                return;
-            }
-
-            // 複数の結果がある場合
-            let message = `"${query}" の検索結果 (${results.length}件):\n\n`;
-
-            results.slice(0, 3).forEach((result, index) => {
-                message += `${index + 1}. ${result.title}\n`;
-                message += `   関連度: ${'★'.repeat(Math.min(5, Math.ceil(result.score / 3)))}\n\n`;
+                bodyHTML += `<button class="result-action-btn secondary" onclick="copySearchResult('${pageResult.pageTitle.replace(/'/g, "\\'")}')">タイトルをコピー</button>`;
+                bodyHTML += `</div>`;
+                bodyHTML += `</div>`;
             });
+            
+            body.innerHTML = bodyHTML;
+            modal.style.display = 'flex';
+        }
 
-            if (results.length > 3) {
-                message += `...他${results.length - 3}件の結果があります\n\n`;
+        function navigateToPage(page) {
+            console.log('ページ遷移:', page);
+            closeSearchModal();
+            window.location.href = page;
+        }
+
+        function copySearchResult(title) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(title).then(() => {
+                    // 簡単なフィードバック
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'コピー完了!';
+                    button.style.background = '#48bb78';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '#e2e8f0';
+                    }, 1000);
+                });
             }
+        }
 
-            // 最も関連度の高いページへの遷移を提案
-            const topResult = results[0];
-            console.log('トップ結果:', topResult);
-
-            if (topResult.page !== 'index.html') {
-                message += `最も関連度の高いページ:\n「${topResult.title}」\n\nこのページを開きますか？`;
-                const shouldNavigate = confirm(message);
-                console.log('遷移判定:', shouldNavigate, 'ページ:', topResult.page);
-
-                if (shouldNavigate) {
-                    console.log('ページ遷移実行:', topResult.page);
-                    // まず新しいタブで開くことを試行
-                    const newTab = window.open(topResult.page, '_blank');
-                    if (newTab) {
-                        // 新しいタブが開けた場合、現在のタブでも遷移
-                        setTimeout(() => {
-                            window.location.href = topResult.page;
-                        }, 100);
-                    } else {
-                        // 新しいタブが開けない場合、直接遷移
-                        window.location.href = topResult.page;
-                    }
-                }
-            } else {
-                alert(message + '\n該当する専門ページが見つかりました。このページで詳細をご確認ください。');
-            }
+        function closeSearchModal() {
+            document.getElementById('searchModal').style.display = 'none';
         }
 
         function performSearchAction() {
@@ -664,6 +917,20 @@
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 performSearchAction();
+            }
+        });
+
+        // モーダル外クリックで閉じる
+        document.getElementById('searchModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSearchModal();
+            }
+        });
+
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSearchModal();
             }
         });
 
