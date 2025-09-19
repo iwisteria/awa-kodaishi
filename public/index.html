@@ -27,7 +27,7 @@
             padding: 40px 20px;
         }
 
-        /* ヒーロー - 全幅対応 */
+        /* ヒーロー - 完全な全幅対応 */
         .hero {
             height: 100vh;
             min-height: 600px;
@@ -37,8 +37,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin: 0 -20px 40px -20px;
+            width: 100vw;
             position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            margin-bottom: 40px;
             overflow: hidden;
         }
 
@@ -324,7 +329,6 @@
             .hero {
                 height: 100vh;
                 min-height: 500px;
-                margin: 0 -16px 40px -16px; /* モバイル用マージン調整 */
                 background-attachment: scroll; /* モバイルでのパフォーマンス向上 */
             }
 
