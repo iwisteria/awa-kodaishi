@@ -522,22 +522,27 @@
         const searchData = {
             'index.html': {
                 title: 'トップページ - 阿波古代史をAIに調査してもらった',
-                content: `阿波古代史 AI調査 研究サイト 古代阿波国 徳島県 忌部氏 文献調査 地理的分析 宗教史的考察 
+                content: `阿波古代史 AI調査 研究サイト 古代阿波国 徳島県 忌部氏 斎部氏 文献調査 地理的分析 宗教史的考察
                 奈良県 京都府 阿波関連地名 神社 歴史的起源 畿内地域 中央政権 地理的観点 宗教的観点
                 波爾布神社 阿波 歴史的宗教的結合 祭神 創建伝承 文献史料 宗教的アイデンティティ 神社信仰
-                古事記 日本書紀 考古学的証拠 文献史料 阿波忌部氏 中央政界 古代交通路 文化伝播 上一宮大粟神社`
+                古事記 日本書紀 考古学的証拠 文献史料 阿波忌部氏 中央政界 古代交通路 文化伝播 上一宮大粟神社
+                研究テーマ 調査 分析 新たな知見 発見 Claude Anthropic`
             },
             'nara-kyoto-awa.html': {
                 title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
-                content: `奈良県 京都府 阿波関連地名 神社 歴史的起源 忌部氏 組織的文化伝播 斑鳩町 阿波地区 率川阿波神社
+                content: `奈良県 京都府 阿波関連地名 神社 歴史的起源 忌部氏 斎部氏 組織的文化伝播 斑鳩町 阿波地区 率川阿波神社
                 城陽市 精神社 延喜式内社 古代阿波国 徳島県 畿内 戦略的移住 文化的結びつき 聖徳太子 斑鳩宮 法隆寺
-                事代主神 恵比寿神 藤原是公 神階 朝廷 公式認定 少彦名命 農業 医療 国土開発 東阿波型土器 古墳時代`
+                事代主神 恵比寿神 藤原是公 神階 朝廷 公式認定 少彦名命 農業 医療 国土開発 東阿波型土器 古墳時代
+                地名学 考古学 辰砂 水銀朱 若杉山遺跡 黒谷川郡頭遺跡 加茂宮前遺跡 製鉄 鉄器 結晶片岩 石室建設
+                古語拾遺 斎部広成 天富命 天日鷲命 延喜式 大嘗祭 麁服 麻布 瀬戸内海航路 河内湖 古代大和川`
             },
             'harifu-shrine.html': {
                 title: '波爾布神社と阿波の歴史的宗教的結合',
                 content: `波爾布神社 はにふじんじゃ 滋賀県高島市 阿波地域 関係 奈良時代 神霊勧請 歴史的結合 741年 天平13年
                 阿波国 御祭神 地域間宗教ネットワーク 彦都波乃賣命 波爾山毘賣命 二柱体制 1300年 精神的結合
-                建嶋女祖命神社 徳島県小松島市 那賀郡 橘諸兄 神輿 神田二町 寄進 宗教儀礼 神霊移転`
+                建嶋女祖命神社 徳島県小松島市 那賀郡 橘諸兄 神輿 神田二町 寄進 宗教儀礼 神霊移転 聖武天皇
+                国分寺 国分尼寺 琵琶湖水運 古津 湖上渡御 筑摩神社 古墳 銅鏡 土器 忌部氏宗教ネットワーク
+                大麻比古神社 忌部神社 朝廷祭祀 丑の祭 農事歴 海洋祭祀 後土御門天皇 源義家`
             }
         };
 
@@ -585,26 +590,40 @@
                 alert(`"${query}" に関する検索結果が見つかりませんでした。\n\n検索のヒント:\n• 「忌部」「阿波」「神社」「古代」などのキーワードを試してください\n• 複数の単語で検索する場合はスペースで区切ってください`);
                 return;
             }
-            
-            let message = `"${query}" の検索結果 (${results.length}件):\n\n`;
-            
-            results.slice(0, 5).forEach((result, index) => {
-                message += `${index + 1}. ${result.title}\n`;
-                message += `   関連度: ${'★'.repeat(Math.min(5, Math.ceil(result.score / 3)))}\n`;
-                if (result.page !== 'index.html') {
-                    message += `   → このページを開く: ${result.page}\n`;
+
+            // 検索結果が1件の場合は直接遷移
+            if (results.length === 1 && results[0].page !== 'index.html') {
+                const result = results[0];
+                const shouldNavigate = confirm(`検索結果: ${result.title}\n\nこのページを開きますか？`);
+                if (shouldNavigate) {
+                    window.location.href = result.page;
                 }
-                message += '\n';
-            });
-            
-            if (results.length > 5) {
-                message += `...他${results.length - 5}件の結果があります\n`;
+                return;
             }
-            
-            const shouldNavigate = confirm(message + '\n最も関連度の高いページを開きますか？');
-            
-            if (shouldNavigate && results[0].page !== 'index.html') {
-                window.location.href = results[0].page;
+
+            // 複数の結果がある場合
+            let message = `"${query}" の検索結果 (${results.length}件):\n\n`;
+
+            results.slice(0, 3).forEach((result, index) => {
+                message += `${index + 1}. ${result.title}\n`;
+                message += `   関連度: ${'★'.repeat(Math.min(5, Math.ceil(result.score / 3)))}\n\n`;
+            });
+
+            if (results.length > 3) {
+                message += `...他${results.length - 3}件の結果があります\n\n`;
+            }
+
+            // 最も関連度の高いページへの遷移を提案
+            const topResult = results[0];
+            if (topResult.page !== 'index.html') {
+                message += `最も関連度の高いページ:\n「${topResult.title}」\n\nこのページを開きますか？`;
+                const shouldNavigate = confirm(message);
+
+                if (shouldNavigate) {
+                    window.location.href = topResult.page;
+                }
+            } else {
+                alert(message + '\n該当する専門ページが見つかりました。このページで詳細をご確認ください。');
             }
         }
 
