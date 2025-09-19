@@ -29,7 +29,9 @@
 
         /* ヘッダー */
         .hero {
-            background: 
+            height: 100vh;
+            min-height: 600px;
+            background:
                 linear-gradient(
                     135deg,
                     rgba(26, 32, 44, 0.75) 0%,
@@ -43,10 +45,13 @@
             background-repeat: no-repeat;
             color: white;
             text-align: center;
-            padding: 100px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 40px;
             border-radius: 12px;
-            box-shadow: 
+            box-shadow:
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
@@ -66,18 +71,52 @@
             pointer-events: none;
         }
 
+        .hero-content {
+            z-index: 2;
+            position: relative;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
             letter-spacing: -0.025em;
             margin-bottom: 16px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .hero p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
         }
 
         /* 検索セクション */
@@ -276,22 +315,31 @@
         /* レスポンシブ */
         @media (max-width: 768px) {
             .hero {
+                height: 100vh;
+                min-height: 500px;
                 background-attachment: scroll; /* モバイルでのパフォーマンス向上 */
-                padding: 60px 0; /* パディングを調整 */
             }
-            
+
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
-            
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-content {
+                padding: 0 16px;
+            }
+
             .content {
                 padding: 24px;
             }
-            
+
             .container {
                 padding: 20px 16px;
             }
-            
+
             .nav-menu ul {
                 flex-direction: column;
                 align-items: center;
@@ -324,9 +372,14 @@
 <body>
     <div class="container">
         <!-- ヘッダー -->
-        <header class="hero fade-in">
-            <h1>阿波古代史をAIに調査してもらった</h1>
-            <p>古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト</p>
+        <header class="hero fade-in" id="hero">
+            <div class="hero-content">
+                <h1>阿波古代史をAIに調査してもらった</h1>
+                <p>古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト</p>
+            </div>
+            <div class="hero-scroll-indicator" onclick="scrollToContent()">
+                ↓
+            </div>
         </header>
 
         <!-- ナビゲーション -->
@@ -417,6 +470,26 @@
                 }
             }
         });
+
+        // パララックス効果
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const rate = scrolled * -0.5;
+
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${rate}px)`;
+            }
+        });
+
+        // ヒーローから次のセクションへのスムーズスクロール
+        function scrollToContent() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
 
         // スムーズスクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
