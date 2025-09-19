@@ -596,7 +596,14 @@
                 const result = results[0];
                 const shouldNavigate = confirm(`検索結果: ${result.title}\n\nこのページを開きますか？`);
                 if (shouldNavigate) {
-                    window.location.href = result.page;
+                    console.log('単一結果の遷移:', result.page);
+                    try {
+                        window.location.href = result.page;
+                    } catch (error) {
+                        console.error('遷移エラー:', error);
+                        // 代替手段: 新しいタブで開く
+                        window.open(result.page, '_blank');
+                    }
                 }
                 return;
             }
@@ -615,12 +622,26 @@
 
             // 最も関連度の高いページへの遷移を提案
             const topResult = results[0];
+            console.log('トップ結果:', topResult);
+
             if (topResult.page !== 'index.html') {
                 message += `最も関連度の高いページ:\n「${topResult.title}」\n\nこのページを開きますか？`;
                 const shouldNavigate = confirm(message);
+                console.log('遷移判定:', shouldNavigate, 'ページ:', topResult.page);
 
                 if (shouldNavigate) {
-                    window.location.href = topResult.page;
+                    console.log('ページ遷移実行:', topResult.page);
+                    // まず新しいタブで開くことを試行
+                    const newTab = window.open(topResult.page, '_blank');
+                    if (newTab) {
+                        // 新しいタブが開けた場合、現在のタブでも遷移
+                        setTimeout(() => {
+                            window.location.href = topResult.page;
+                        }, 100);
+                    } else {
+                        // 新しいタブが開けない場合、直接遷移
+                        window.location.href = topResult.page;
+                    }
                 }
             } else {
                 alert(message + '\n該当する専門ページが見つかりました。このページで詳細をご確認ください。');
@@ -630,8 +651,12 @@
         function performSearchAction() {
             const query = document.getElementById('searchInput').value.trim();
             if (query) {
+                console.log('検索クエリ:', query);
                 const results = performSearch(query);
+                console.log('検索結果:', results);
                 displaySearchResults(results, query);
+            } else {
+                alert('検索キーワードを入力してください。');
             }
         }
 
