@@ -275,12 +275,13 @@
 
         /* レスポンシブ */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
+            .hero {
+                background-attachment: scroll; /* モバイルでのパフォーマンス向上 */
+                padding: 60px 0; /* パディングを調整 */
             }
             
-            .hero {
-                padding: 40px 0;
+            .hero h1 {
+                font-size: 2rem;
             }
             
             .content {
