@@ -31,18 +31,6 @@
         .hero {
             height: 100vh;
             min-height: 600px;
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(26, 32, 44, 0.75) 0%,
-                    rgba(45, 55, 72, 0.65) 50%,
-                    rgba(26, 32, 44, 0.80) 100%
-                ),
-                url('images/ooawa-hero.jpeg');
-            background-size: cover;
-            background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
             color: white;
             text-align: center;
             display: flex;
@@ -61,14 +49,37 @@
         .hero::before {
             content: '';
             position: absolute;
+            top: -20%;
+            left: 0;
+            right: 0;
+            bottom: -20%;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(26, 32, 44, 0.75) 0%,
+                    rgba(45, 55, 72, 0.65) 50%,
+                    rgba(26, 32, 44, 0.80) 100%
+                ),
+                url('images/ooawa-hero.jpeg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            will-change: transform;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 60%),
                 radial-gradient(circle at 70% 30%, rgba(34, 139, 34, 0.1) 0%, transparent 60%);
             pointer-events: none;
+            z-index: 1;
         }
 
         .hero-content {
@@ -472,15 +483,40 @@
         });
 
         // パララックス効果
-        window.addEventListener('scroll', function() {
+        function parallaxEffect() {
             const scrolled = window.pageYOffset;
             const hero = document.querySelector('.hero');
-            const rate = scrolled * -0.5;
+            const heroHeight = hero ? hero.offsetHeight : 0;
 
-            if (hero && scrolled < window.innerHeight) {
-                hero.style.transform = `translateY(${rate}px)`;
+            if (hero && scrolled <= heroHeight) {
+                const rate = scrolled * 0.5;
+                const heroBackground = hero.querySelector('.hero-bg') ||
+                    (() => {
+                        const bg = document.createElement('div');
+                        bg.className = 'hero-bg';
+                        bg.style.cssText = `
+                            position: absolute;
+                            top: -20%;
+                            left: 0;
+                            right: 0;
+                            bottom: -20%;
+                            background: linear-gradient(135deg, rgba(26, 32, 44, 0.75) 0%, rgba(45, 55, 72, 0.65) 50%, rgba(26, 32, 44, 0.80) 100%), url('images/ooawa-hero.jpeg');
+                            background-size: cover;
+                            background-position: center center;
+                            background-repeat: no-repeat;
+                            z-index: -1;
+                            will-change: transform;
+                        `;
+                        hero.appendChild(bg);
+                        return bg;
+                    })();
+
+                heroBackground.style.transform = `translateY(${rate}px)`;
             }
-        });
+        }
+
+        window.addEventListener('scroll', parallaxEffect);
+        window.addEventListener('resize', parallaxEffect);
 
         // ヒーローから次のセクションへのスムーズスクロール
         function scrollToContent() {
