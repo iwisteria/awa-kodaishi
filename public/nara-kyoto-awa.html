@@ -558,168 +558,18 @@
             </section>
         </main>
 
-        <button class="scroll-top" onclick="scrollToTop()">↑</button>
+        <button class="scroll-top">↑</button>
     </div>
 
+    <!-- JavaScript temporarily disabled for iPhone testing -->
     <script>
-        // エラー処理とデバッグ用
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            console.log('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
-            return false;
-        };
-
-        // フェードインアニメーション（Intersection Observer対応とフォールバック）
+        // すべての.fade-in要素を即座に表示
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                var elements = document.querySelectorAll('.fade-in');
-
-                // Intersection Observer API がサポートされているかチェック
-                if ('IntersectionObserver' in window) {
-                    var observer = new IntersectionObserver(function(entries) {
-                        for (var i = 0; i < entries.length; i++) {
-                            var entry = entries[i];
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add('visible');
-                            }
-                        }
-                    }, {
-                        threshold: 0.1,
-                        rootMargin: '0px 0px -50px 0px'
-                    });
-
-                    for (var i = 0; i < elements.length; i++) {
-                        observer.observe(elements[i]);
-                    }
-                } else {
-                    // Intersection Observer がサポートされていない場合のフォールバック
-                    function checkVisibility() {
-                        for (var i = 0; i < elements.length; i++) {
-                            var el = elements[i];
-                            if (!el.classList.contains('visible')) {
-                                var rect = el.getBoundingClientRect();
-                                var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-                                if (rect.top < windowHeight - 50) {
-                                    el.classList.add('visible');
-                                }
-                            }
-                        }
-                    }
-
-                    // 初期チェック
-                    checkVisibility();
-
-                    // スクロール時にチェック
-                    var scrollTimer = null;
-                    window.addEventListener('scroll', function() {
-                        if (scrollTimer) clearTimeout(scrollTimer);
-                        scrollTimer = setTimeout(checkVisibility, 10);
-                    }, { passive: true });
-                }
-            } catch (e) {
-                console.log('Fade-in animation error:', e);
-                // フォールバック：すべての要素を即座に表示
-                var elements = document.querySelectorAll('.fade-in');
-                for (var i = 0; i < elements.length; i++) {
-                    elements[i].classList.add('visible');
-                }
+            var elements = document.querySelectorAll('.fade-in');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.add('visible');
             }
         });
-
-        // スクロールトップボタン
-        try {
-            var scrollTopButton = document.querySelector('.scroll-top');
-            var scrollTopTimer = null;
-
-            if (scrollTopButton) {
-                window.addEventListener('scroll', function() {
-                    if (scrollTopTimer) clearTimeout(scrollTopTimer);
-                    scrollTopTimer = setTimeout(function() {
-                        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                        if (scrollY > 300) {
-                            scrollTopButton.style.display = 'block';
-                        } else {
-                            scrollTopButton.style.display = 'none';
-                        }
-                    }, 10);
-                }, { passive: true });
-            }
-        } catch (e) {
-            console.log('Scroll button error:', e);
-        }
-
-        function scrollToTop() {
-            try {
-                // スムーズスクロール対応チェック
-                if ('scrollBehavior' in document.documentElement.style) {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    // フォールバック：簡易アニメーション
-                    var currentY = window.pageYOffset || document.documentElement.scrollTop;
-                    var targetY = 0;
-                    var distance = currentY - targetY;
-                    var duration = 500;
-                    var start = Date.now();
-
-                    function easeInOutQuart(t) {
-                        return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-                    }
-
-                    function animateScroll() {
-                        var elapsed = Date.now() - start;
-                        var progress = Math.min(elapsed / duration, 1);
-                        var easeProgress = easeInOutQuart(progress);
-
-                        window.scrollTo(0, currentY - (distance * easeProgress));
-
-                        if (progress < 1 && window.requestAnimationFrame) {
-                            requestAnimationFrame(animateScroll);
-                        }
-                    }
-
-                    if (window.requestAnimationFrame) {
-                        animateScroll();
-                    } else {
-                        window.scrollTo(0, 0);
-                    }
-                }
-            } catch (e) {
-                console.log('Scroll to top error:', e);
-                window.scrollTo(0, 0);
-            }
-        }
-
-        // スムーズスクロール
-        try {
-            var anchors = document.querySelectorAll('a[href^="#"]');
-            for (var i = 0; i < anchors.length; i++) {
-                anchors[i].addEventListener('click', function (e) {
-                    try {
-                        e.preventDefault();
-                        var targetId = this.getAttribute('href');
-                        var target = document.querySelector(targetId);
-                        if (target) {
-                            if ('scrollBehavior' in document.documentElement.style) {
-                                target.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start'
-                                });
-                            } else {
-                                // フォールバック
-                                var targetPosition = target.offsetTop;
-                                window.scrollTo(0, targetPosition);
-                            }
-                        }
-                    } catch (err) {
-                        console.log('Anchor scroll error:', err);
-                    }
-                });
-            }
-        } catch (e) {
-            console.log('Anchor setup error:', e);
-        }
     </script>
 </body>
 </html>
