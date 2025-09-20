@@ -1,0 +1,26 @@
+{{ define "main" }}
+<div class="list-page">
+    <header class="list-header">
+        <h1>{{ .Title }}</h1>
+    </header>
+
+    <div class="posts-list">
+        {{ range .Pages }}
+        <article class="post-item">
+            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+            {{ if .Params.subtitle }}
+            <p class="subtitle">{{ .Params.subtitle }}</p>
+            {{ end }}
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006年1月2日" }}</time>
+            <div class="post-summary">
+                {{ .Summary }}
+            </div>
+        </article>
+        {{ end }}
+    </div>
+
+    <nav class="list-nav">
+        <a href="/">&larr; トップページに戻る</a>
+    </nav>
+</div>
+{{ end }}
