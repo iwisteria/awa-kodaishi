@@ -6,7 +6,8 @@
       "Bash(git push:*)",
       "Bash(curl:*)",
       "Read(//Users/mflmacmini20141227/WorkSpace/private/**)",
-      "Bash(hugo:*)"
+      "Bash(hugo:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []
