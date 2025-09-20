@@ -1,0 +1,12 @@
+baseURL = 'https://awa-kodaishi-hugo.netlify.app'
+languageCode = 'ja'
+title = '阿波古代史をAIに調査してもらった'
+theme = ''
+
+[params]
+  description = '古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト'
+  
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
