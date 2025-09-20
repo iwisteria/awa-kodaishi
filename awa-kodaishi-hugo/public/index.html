@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta name="generator" content="Hugo 0.150.0"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1314&amp;path=livereload" data-no-instant defer></script>
+	<meta name="generator" content="Hugo 0.150.0">
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
@@ -116,6 +116,19 @@
     </section>
 </div>
 
+
+<div class="search-results-modal" id="searchModal">
+    <div class="search-results-content">
+        <div class="search-results-header">
+            <button class="close-button" onclick="closeSearchModal()">&times;</button>
+            <h3 id="searchResultsTitle">検索結果</h3>
+        </div>
+        <div id="searchResultsBody">
+            
+        </div>
+    </div>
+</div>
+
 <script>
 function scrollToContent() {
     const navMenu = document.querySelector('.nav-menu');
@@ -125,11 +138,203 @@ function scrollToContent() {
     });
 }
 
+
+const searchData = {
+    'index.html': {
+        title: 'トップページ - 阿波古代史をAIに調査してもらった',
+        sections: [
+            {
+                id: 'about',
+                title: 'サイト概要',
+                content: '古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト。Claude（Anthropic社製AI）を研究パートナーとして、阿波忌部氏、斎部氏による組織的文化伝播を調査。'
+            },
+            {
+                id: 'about',
+                title: 'AI活用による歴史研究',
+                content: '従来の文献史学に加え、AI技術による大量データの分析と新たな視点の提供により、これまで見過ごされていた歴史的連関の発見を目指しています。'
+            }
+        ]
+    },
+    '/posts/nara-kyoto-awa/': {
+        title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
+        sections: [
+            {
+                id: 'distribution',
+                title: '斑鳩町阿波地区の詳細分析',
+                content: '生駒郡斑鳩町内で阿波1丁目から3丁目および阿波大字として行政区画に正式記録。聖徳太子の斑鳩宮（602年建立）および法隆寺の近隣に位置し、古代における重要な文化的拠点との地理的関連性を示している。'
+            },
+            {
+                id: 'distribution',
+                title: '率川阿波神社の歴史',
+                content: '奈良市の率川神社境内に位置し、延喜式神名帳（927年）に正式記録された官社。宝亀年間（770-780年）に藤原是公によって創建され、事代主神（恵比寿神）を阿波国から勧請。文徳実録（879年）において従五位下の神階を授与。'
+            },
+            {
+                id: 'distribution',
+                title: '粟神社の研究',
+                content: '京都府城陽市の延喜式神名帳記載の式内社。主祭神は少彦名命（農業・医療・国土開発の神）。「粟」（awa）という神社名は阿波国の「阿波」（awa）と同一語源。城陽市周辺で東阿波型土器が出土し、古墳時代における阿波系住民の移住を物的に証明。'
+            },
+            {
+                id: 'imbe-migration',
+                title: '忌部氏による文化伝播',
+                content: '古語拾遺（807年、斎部広成著）に天富命が諸斎部を率いて東国に赴き、房総半島に安房国を建設と明記。天岩戸神話で天日鷲命が神聖な繊維（木綿）を創出。延喜式（927年）に阿波忌部氏の継続的貢納義務が詳細記録。'
+            }
+        ]
+    },
+    '/posts/harifu-shrine/': {
+        title: '波爾布神社と阿波の歴史的宗教的結合',
+        sections: [
+            {
+                id: 'evidence',
+                title: '741年の神霊勧請記録',
+                content: '741年（天平13年）聖武天皇の治世において、阿波国那賀郡（現在の徳島県小松島市）にある建嶋女祖命神社から波爾山毘賣命を勧請。橘諸兄の支援のもと、神輿と神田二町の寄進を伴う正式な宗教儀礼として神霊移転が実行。'
+            },
+            {
+                id: 'religion',
+                title: '1300年の精神的結合',
+                content: '彦都波乃賣命と阿波から迎えた波爾山毘賣命の両神を祀る二柱体制を維持し、1300年にわたって両地域の精神的結合を象徴。延喜式神名帳（927年編纂）において、両神社がともに式内社として公式認定。'
+            }
+        ]
+    }
+};
+
+function performSearch(query) {
+    if (!query.trim()) return [];
+
+    const results = [];
+    const searchTerms = query.toLowerCase().split(/\s+/);
+
+    Object.entries(searchData).forEach(([page, data]) => {
+        const pageResults = [];
+
+        
+        const titleLower = data.title.toLowerCase();
+        let titleScore = 0;
+        searchTerms.forEach(term => {
+            const matches = (titleLower.match(new RegExp(term, 'g')) || []).length;
+            titleScore += matches * 5;
+        });
+
+        if (titleScore > 0) {
+            pageResults.push({
+                type: 'title',
+                title: data.title,
+                content: data.title,
+                score: titleScore
+            });
+        }
+
+        
+        data.sections.forEach(section => {
+            const sectionTitleLower = section.title.toLowerCase();
+            const sectionContentLower = section.content.toLowerCase();
+            let sectionScore = 0;
+
+            searchTerms.forEach(term => {
+                const titleMatches = (sectionTitleLower.match(new RegExp(term, 'g')) || []).length;
+                const contentMatches = (sectionContentLower.match(new RegExp(term, 'g')) || []).length;
+
+                sectionScore += titleMatches * 3;
+                sectionScore += contentMatches;
+            });
+
+            if (sectionScore > 0) {
+                pageResults.push({
+                    type: 'section',
+                    title: section.title,
+                    content: section.content,
+                    score: sectionScore,
+                    sectionId: section.id
+                });
+            }
+        });
+
+        if (pageResults.length > 0) {
+            const totalScore = pageResults.reduce((sum, result) => sum + result.score, 0);
+            results.push({
+                page: page,
+                pageTitle: data.title,
+                results: pageResults.sort((a, b) => b.score - a.score),
+                totalScore: totalScore
+            });
+        }
+    });
+
+    return results.sort((a, b) => b.totalScore - a.totalScore);
+}
+
+function displaySearchResults(results, query) {
+    if (results.length === 0) {
+        alert(`"${query}" に関する検索結果が見つかりませんでした。\n\n検索のヒント:\n• 「忌部」「阿波」「神社」「古代」などのキーワードを試してください\n• 複数の単語で検索する場合はスペースで区切ってください`);
+        return;
+    }
+
+    const modal = document.getElementById('searchModal');
+    const title = document.getElementById('searchResultsTitle');
+    const body = document.getElementById('searchResultsBody');
+
+    title.textContent = `"${query}" の検索結果 (${results.length}ページ)`;
+
+    let bodyHTML = '';
+
+    results.forEach((pageResult) => {
+        bodyHTML += `<div class="search-result-item">`;
+        bodyHTML += `<div class="result-title">${pageResult.pageTitle}</div>`;
+        bodyHTML += `<div class="result-score">総合関連度: ${'★'.repeat(Math.min(5, Math.ceil(pageResult.totalScore / 5)))}</div>`;
+
+        pageResult.results.slice(0, 3).forEach(sectionResult => {
+            bodyHTML += `<div class="result-snippet">`;
+            bodyHTML += `<h4>${sectionResult.title}</h4>`;
+
+            let content = sectionResult.content;
+
+            
+            const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
+            searchTerms.forEach(term => {
+                const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                content = content.replace(regex, '<mark>$1</mark>');
+            });
+
+            if (content.length > 300) {
+                content = content.substring(0, 300) + '...';
+            }
+
+            bodyHTML += `<p>${content}</p>`;
+            bodyHTML += `</div>`;
+        });
+
+        bodyHTML += `<div class="result-actions">`;
+        if (pageResult.page !== 'index.html') {
+            bodyHTML += `<button class="result-action-btn" onclick="navigateToPageWithHighlight('${pageResult.page}', '${query}')">ページを開く</button>`;
+        }
+        bodyHTML += `</div>`;
+        bodyHTML += `</div>`;
+    });
+
+    body.innerHTML = bodyHTML;
+    modal.style.display = 'flex';
+}
+
+function navigateToPage(page) {
+    closeSearchModal();
+    window.location.href = page;
+}
+
+function navigateToPageWithHighlight(page, query) {
+    closeSearchModal();
+    const encodedQuery = encodeURIComponent(query);
+    window.location.href = `${page}?highlight=${encodedQuery}`;
+}
+
+function closeSearchModal() {
+    document.getElementById('searchModal').style.display = 'none';
+}
+
 function performSearchAction() {
     const query = document.getElementById('searchInput').value.trim();
     if (query) {
-        
-        alert(`"${query}" の検索機能は開発中です。\n\n現在は以下のページをご覧ください：\n• 奈良・京都の阿波関連地名\n• 波爾布神社と阿波`);
+        const results = performSearch(query);
+        displaySearchResults(results, query);
     } else {
         alert('検索キーワードを入力してください。');
     }
@@ -144,6 +349,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 performSearchAction();
             }
         });
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchModal = document.getElementById('searchModal');
+    if (searchModal) {
+        searchModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSearchModal();
+            }
+        });
+    }
+});
+
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeSearchModal();
     }
 });
 </script>

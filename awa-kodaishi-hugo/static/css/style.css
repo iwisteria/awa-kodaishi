@@ -119,6 +119,32 @@ body {
     }
 }
 
+/* ページヘッダー（個別ページ用） */
+.page-header {
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 40px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+    color: #1a202c;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.page-header .subtitle {
+    color: #4a5568;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 500;
+}
+
 /* 検索セクション */
 .search-section {
     background: #ffffff;
@@ -294,6 +320,183 @@ h3::before {
     color: #1a202c;
     font-weight: 600;
     margin-bottom: 12px;
+}
+
+/* 検索結果モーダル */
+.search-results-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.search-results-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1001;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #718096;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button:hover {
+    color: #1a202c;
+}
+
+.search-result-item {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.result-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 8px;
+}
+
+.result-score {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.result-snippet {
+    margin-bottom: 12px;
+}
+
+.result-snippet h4 {
+    font-size: 1rem;
+    color: #2d3748;
+    margin-bottom: 6px;
+}
+
+.result-snippet p {
+    color: #4a5568;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.result-actions {
+    margin-top: 12px;
+}
+
+.result-action-btn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 8px;
+    transition: all 0.2s ease;
+}
+
+.result-action-btn:hover {
+    background: #3182ce;
+}
+
+/* 検索ハイライト */
+mark, .search-highlight {
+    background: #fef08a !important;
+    color: #1a202c !important;
+    font-weight: 600 !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+    box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2) !important;
+    transition: all 0.3s ease;
+}
+
+/* 現在のハイライト位置 */
+.current-highlight {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5) !important;
+    transform: scale(1.05);
+}
+
+/* ハイライト情報バナー */
+#highlight-info {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1a202c;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideInRight 0.3s ease;
+}
+
+#highlight-info button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+#highlight-info button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .nav-menu {

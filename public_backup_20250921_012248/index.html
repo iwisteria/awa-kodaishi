@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿波古代史をAIに調査してもらった</title>
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="images/awa-kodaishi-icon.png" type="image/png">
+    <link rel="shortcut icon" href="images/awa-kodaishi-icon.png" type="image/png">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="images/awa-kodaishi-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/awa-kodaishi-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="images/awa-kodaishi-icon.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="images/awa-kodaishi-icon.png">
+
+    <!-- Android/Chrome Icons -->
+    <link rel="icon" sizes="192x192" href="images/awa-kodaishi-icon.png">
+    <link rel="icon" sizes="512x512" href="images/awa-kodaishi-icon.png">
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileImage" content="images/awa-kodaishi-icon.png">
+    <meta name="msapplication-TileColor" content="#4299e1">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#4299e1">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* 基本設定 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+                         'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 
+                         Meiryo, sans-serif;
+            background: #f8fafc;
+            color: #2d3748;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ヒーロー - 完全な全幅対応 */
+        .hero {
+            height: 100vh;
+            min-height: 600px;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 0;
+            right: 0;
+            bottom: -20%;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(26, 32, 44, 0.3) 0%,
+                    rgba(45, 55, 72, 0.2) 50%,
+                    rgba(26, 32, 44, 0.35) 100%
+                ),
+                url('images/ooawa-hero.jpeg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            will-change: transform;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 70% 30%, rgba(34, 139, 34, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-content {
+            z-index: 2;
+            position: relative;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 16px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-caption {
+            position: absolute;
+            bottom: 60px;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+            z-index: 2;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        /* 検索セクション */
+        .search-section {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 100px 16px 50px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #4299e1;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+            font-size: 1.2rem;
+        }
+
+        .search-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-button:hover {
+            background: #3182ce;
+        }
+
+        .search-note {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        /* 検索結果モーダル */
+        .search-results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-results-content {
+            background: white;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-results-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .search-results-header h3 {
+            margin: 0;
+            padding: 0;
+            color: #1a202c;
+            font-size: 1.25rem;
+        }
+
+        .search-results-header::before {
+            display: none;
+        }
+
+        .close-button {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+            padding: 0;
+            margin-top: -4px;
+        }
+
+        .close-button:hover {
+            color: #2d3748;
+        }
+
+        .search-result-item {
+            padding: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .result-score {
+            color: #ed8936;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .result-snippet {
+            background: #f7fafc;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid #4299e1;
+            margin-bottom: 12px;
+        }
+
+        .result-snippet h4 {
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-snippet p {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .result-action-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .result-action-btn:hover {
+            background: #3182ce;
+        }
+
+        .result-action-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .result-action-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
+        /* 検索ハイライト */
+        mark {
+            background: #fef08a !important;
+            color: #1a202c !important;
+            font-weight: 600 !important;
+            padding: 2px 4px !important;
+            border-radius: 3px !important;
+            box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2) !important;
+        }
+
+        /* コンテンツエリア */
+        .content {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 見出し */
+        h2 {
+            color: #1a202c;
+            font-size: 1.75rem;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #2d3748;
+            font-size: 1.25rem;
+            margin: 32px 0 16px 0;
+            font-weight: 600;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: #4299e1;
+            border-radius: 2px;
+        }
+
+        /* テーマカード */
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .theme-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 32px 24px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .theme-card:hover {
+            border-color: #4299e1;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .theme-card h4 {
+            color: #1a202c;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .theme-card p {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .theme-status {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f7fafc;
+            border: 1px solid #bee3f8;
+            border-left: 4px solid #4299e1;
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 6px;
+        }
+
+        .info-box h4 {
+            color: #1a202c;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        /* ナビゲーション */
+        .nav-menu {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-menu a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background: #4299e1;
+            color: white;
+            border-color: #4299e1;
+            transform: translateY(-1px);
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .hero {
+                height: 100vh;
+                min-height: 500px;
+                background-attachment: scroll;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-content {
+                padding: 0 16px;
+            }
+
+            .hero-caption {
+                bottom: 50px;
+                right: 16px;
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .nav-menu ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .themes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-card {
+                padding: 24px 20px;
+            }
+
+            .search-box input {
+                padding: 16px 80px 16px 40px;
+            }
+
+            .search-button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .search-results-content {
+                margin: 10px;
+                max-height: 90vh;
+            }
+
+            .search-results-header {
+                padding: 16px;
+            }
+
+            .search-result-item {
+                padding: 16px;
+            }
+        }
+
+        /* アニメーション */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header class="hero fade-in" id="hero">
+            <div class="hero-content">
+                <h1>阿波古代史をAIに調査してもらった</h1>
+                <p>古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト</p>
+            </div>
+            <div class="hero-caption">
+                上一宮大粟神社
+            </div>
+            <div class="hero-scroll-indicator" onclick="scrollToContent()">
+                ↓
+            </div>
+        </header>
+
+        <!-- ナビゲーション -->
+        <nav class="nav-menu fade-in">
+            <ul>
+                <li><a href="#" class="active">トップページ</a></li>
+                <li><a href="nara-kyoto-awa.html">奈良・京都の阿波関連地名</a></li>
+                <li><a href="harifu-shrine.html">波爾布神社と阿波</a></li>
+                <li><a href="#about">このサイトについて</a></li>
+            </ul>
+        </nav>
+
+        <!-- 検索セクション -->
+        <section class="search-section fade-in">
+            <h2 style="text-align: center; margin-bottom: 20px; border: none; padding: 0;">サイト内検索</h2>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="キーワードを入力してサイト内を検索..." />
+                <button class="search-button" onclick="performSearchAction()">検索</button>
+            </div>
+            <p class="search-note">※ 地名、神社名、人名、時代名などで検索できます</p>
+        </section>
+
+        <!-- 研究テーマ一覧 -->
+        <section class="content fade-in">
+            <h2>研究テーマ一覧</h2>
+            <p>古代阿波国に関する歴史的謎について、AI技術を活用した多角的な調査・分析を行っています。各テーマでは文献調査、地理的分析、宗教史的考察を組み合わせて新たな知見の発見を目指しています。</p>
+            
+            <div class="themes-grid">
+                <a href="nara-kyoto-awa.html" class="theme-card">
+                    <h4>奈良県・京都府における阿波関連地名と神社の歴史的起源</h4>
+                    <p>畿内地域に点在する阿波関連の地名や神社について、その分布パターンと歴史的背景を詳細に調査。古代における阿波国と中央政権との関係性を地理的・宗教的観点から解明します。</p>
+                    <span class="theme-status">調査完了</span>
+                </a>
+                
+                <a href="harifu-shrine.html" class="theme-card">
+                    <h4>波爾布神社と阿波の歴史的宗教的結合</h4>
+                    <p>波爾布神社の起源と阿波国との深い関連性について、祭神、創建伝承、文献史料を総合的に分析。古代阿波の宗教的アイデンティティと神社信仰の発展過程を探究します。</p>
+                    <span class="theme-status">調査完了</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- サイトについて -->
+        <section class="content fade-in" id="about">
+            <h2>このサイトについて</h2>
+            
+            <div class="info-box">
+                <h4>🤖 AI活用による歴史研究の新しいアプローチ</h4>
+                <p>このサイトでは、Claude（Anthropic社製AI）を研究パートナーとして、古代阿波国の歴史的謎に取り組んでいます。従来の文献史学に加え、AI技術による大量データの分析と新たな視点の提供により、これまで見過ごされていた歴史的連関の発見を目指しています。</p>
+            </div>
+
+            <h3>研究方法と特徴</h3>
+            <p>各研究テーマにおいて以下のアプローチを採用しています：</p>
+            <ul style="margin: 16px 0; padding-left: 20px;">
+                <li><strong>多角的文献調査</strong> - 古代から近世までの史料を横断的に分析</li>
+                <li><strong>地理的分布分析</strong> - GIS的手法による地名・神社の空間的パターン解析</li>
+                <li><strong>比較宗教史的考察</strong> - 他地域との宗教的伝承の比較検討</li>
+                <li><strong>AI支援による仮説生成</strong> - 人間では気づきにくい関連性の発見</li>
+            </ul>
+
+            <h3>今後の展開予定</h3>
+            <p>現在の2つのテーマに加えて、以下の研究テーマを順次追加予定です：</p>
+            <ul style="margin: 16px 0; padding-left: 20px;">
+                <li>阿波忌部氏と中央政界での活動</li>
+                <li>『古事記』『日本書紀』における阿波関連記述の分析</li>
+                <li>考古学的証拠と文献史料の統合的検討</li>
+                <li>阿波国の古代交通路と文化伝播</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- 検索結果モーダル -->
+    <div class="search-results-modal" id="searchModal">
+        <div class="search-results-content">
+            <div class="search-results-header">
+                <button class="close-button" onclick="closeSearchModal()">&times;</button>
+                <h3 id="searchResultsTitle">検索結果</h3>
+            </div>
+            <div id="searchResultsBody">
+                <!-- 検索結果がここに表示される -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 検索機能の実装
+        const searchData = {
+            'index.html': {
+                title: 'トップページ - 阿波古代史をAIに調査してもらった',
+                sections: [
+                    {
+                        id: 'about',
+                        title: 'サイト概要',
+                        content: '古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト。Claude（Anthropic社製AI）を研究パートナーとして、阿波忌部氏、斎部氏による組織的文化伝播を調査。'
+                    },
+                    {
+                        id: 'about',
+                        title: 'AI活用による歴史研究',
+                        content: '従来の文献史学に加え、AI技術による大量データの分析と新たな視点の提供により、これまで見過ごされていた歴史的連関の発見を目指しています。'
+                    },
+                    {
+                        id: 'about',
+                        title: '研究方法',
+                        content: '多角的文献調査（古代から近世までの史料を横断的に分析）、地理的分布分析（GIS的手法による地名・神社の空間的パターン解析）、比較宗教史的考察、AI支援による仮説生成。'
+                    },
+                    {
+                        id: 'about',
+                        title: '今後の展開予定',
+                        content: '阿波忌部氏と中央政界での活動、古事記・日本書紀における阿波関連記述の分析、考古学的証拠と文献史料の統合的検討、阿波国の古代交通路と文化伝播。'
+                    }
+                ]
+            },
+            'nara-kyoto-awa.html': {
+                title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
+                sections: [
+                    {
+                        id: 'distribution',
+                        title: '斑鳩町阿波地区の詳細分析',
+                        content: '生駒郡斑鳩町内で阿波1丁目から3丁目および阿波大字として行政区画に正式記録。聖徳太子の斑鳩宮（602年建立）および法隆寺の近隣に位置し、古代における重要な文化的拠点との地理的関連性を示している。'
+                    },
+                    {
+                        id: 'distribution',
+                        title: '率川阿波神社の歴史',
+                        content: '奈良市の率川神社境内に位置し、延喜式神名帳（927年）に正式記録された官社。宝亀年間（770-780年）に藤原是公によって創建され、事代主神（恵比寿神）を阿波国から勧請。文徳実録（879年）において従五位下の神階を授与。'
+                    },
+                    {
+                        id: 'distribution',
+                        title: '城陽市精神社の研究',
+                        content: '京都府城陽市の延喜式神名帳記載の式内社。主祭神は少彦名命（農業・医療・国土開発の神）。「精」（awa）という神社名は阿波国の「阿波」（awa）と同一語源。城陽市周辺で東阿波型土器が出土し、古墳時代における阿波系住民の移住を物的に証明。'
+                    },
+                    {
+                        id: 'imbe-migration',
+                        title: '忌部氏による文化伝播',
+                        content: '古語拾遺（807年、斎部広成著）に天富命が諸斎部を率いて東国に赴き、房総半島に安房国を建設と明記。天岩戸神話で天日鷲命が神聖な繊維（木綿）を創出。延喜式（927年）に阿波忌部氏の継続的貢納義務が詳細記録。'
+                    },
+                    {
+                        id: 'archaeological',
+                        title: '考古学的証拠',
+                        content: '若杉山遺跡（徳島県）の辰砂（水銀朱）が大和の主要古墳で発見。黒谷川郡頭遺跡は1-3世紀の大規模交易拠点。加茂宮前遺跡は古代日本最大の製鉄遺跡。結晶片岩による石室建設技術が玉手山古墳群、松ヶ山古墳で使用。'
+                    },
+                    {
+                        id: 'transportation',
+                        title: '古代交通網',
+                        content: '瀬戸内海航路：阿波→淡路島→大阪湾→河内湖→古代大和川→奈良盆地。阿波系土器（東阿波式土器）の密集分布が確認。準構造船による組織的海上輸送、吉野川水系による山間部資源の効率的運搬。'
+                    }
+                ]
+            },
+            'harifu-shrine.html': {
+                title: '波爾布神社と阿波の歴史的宗教的結合',
+                sections: [
+                    {
+                        id: 'evidence',
+                        title: '741年の神霊勧請記録',
+                        content: '741年（天平13年）聖武天皇の治世において、阿波国那賀郡（現在の徳島県小松島市）にある建嶋女祖命神社から波爾山毘賣命を勧請。橘諸兄の支援のもと、神輿と神田二町の寄進を伴う正式な宗教儀礼として神霊移転が実行。'
+                    },
+                    {
+                        id: 'religion',
+                        title: '1300年の精神的結合',
+                        content: '彦都波乃賣命と阿波から迎えた波爾山毘賣命の両神を祀る二柱体制を維持し、1300年にわたって両地域の精神的結合を象徴。延喜式神名帳（927年編纂）において、両神社がともに式内社として公式認定。'
+                    },
+                    {
+                        id: 'geography',
+                        title: '地理的・文化的結合',
+                        content: '高島郡は琵琶湖水運の要衝として機能し、四国から中央日本への移住ルートの中継点。古代「古津（こふる）」と呼ばれた港湾地帯に位置し、湖上渡御の祭礼を通じて対岸の筑摩神社との宗教的交流を維持。古墳の上に建立され、1931年の調査で銅鏡・土器類が出土。'
+                    },
+                    {
+                        id: 'religion',
+                        title: '忌部氏宗教ネットワーク',
+                        content: '忌部氏による宗教ネットワークが波爾布神社と阿波との結合に重要な役割。忌部氏は阿波地域で大麻比古神社・忌部神社を拠点とし、朝廷祭祀を担当する有力氏族。波爾山毘賣命の神名は水・波、山・大地・高所、毘賣・女神を表し、水と山の融合した女神格。'
+                    },
+                    {
+                        id: 'culture',
+                        title: '文化的影響と継承',
+                        content: '現在の本殿は元和10年（1624年）の建立で四国地方の建築様式の影響。地下での護摩焚きと読経を行う構造は山岳宗教と神仏習合の要素。「丑の祭」として知られる旧暦2月最初の丑日の祭礼は阿波地域の農事歴と同期。明応5年（1496年）の後土御門天皇による再建勅令、源義家による奉納（1088年）など皇室・武家による継続的支援。'
+                    }
+                ]
+            }
+        };
+
+        function performSearch(query) {
+            if (!query.trim()) return [];
+            
+            const results = [];
+            const searchTerms = query.toLowerCase().split(/\s+/);
+            
+            Object.entries(searchData).forEach(([page, data]) => {
+                const pageResults = [];
+                
+                // タイトル検索
+                const titleLower = data.title.toLowerCase();
+                let titleScore = 0;
+                searchTerms.forEach(term => {
+                    const matches = (titleLower.match(new RegExp(term, 'g')) || []).length;
+                    titleScore += matches * 5; // タイトルマッチは最高スコア
+                });
+                
+                if (titleScore > 0) {
+                    pageResults.push({
+                        type: 'title',
+                        title: data.title,
+                        content: data.title,
+                        score: titleScore
+                    });
+                }
+                
+                // セクション検索
+                data.sections.forEach(section => {
+                    const sectionTitleLower = section.title.toLowerCase();
+                    const sectionContentLower = section.content.toLowerCase();
+                    let sectionScore = 0;
+                    
+                    searchTerms.forEach(term => {
+                        const titleMatches = (sectionTitleLower.match(new RegExp(term, 'g')) || []).length;
+                        const contentMatches = (sectionContentLower.match(new RegExp(term, 'g')) || []).length;
+                        
+                        sectionScore += titleMatches * 3; // セクションタイトルマッチ
+                        sectionScore += contentMatches; // セクション内容マッチ
+                    });
+                    
+                    if (sectionScore > 0) {
+                        pageResults.push({
+                            type: 'section',
+                            title: section.title,
+                            content: section.content,
+                            score: sectionScore,
+                            sectionId: section.id
+                        });
+                    }
+                });
+                
+                if (pageResults.length > 0) {
+                    const totalScore = pageResults.reduce((sum, result) => sum + result.score, 0);
+                    results.push({
+                        page: page,
+                        pageTitle: data.title,
+                        results: pageResults.sort((a, b) => b.score - a.score),
+                        totalScore: totalScore
+                    });
+                }
+            });
+            
+            return results.sort((a, b) => b.totalScore - a.totalScore);
+        }
+
+        function displaySearchResults(results, query) {
+            if (results.length === 0) {
+                alert(`"${query}" に関する検索結果が見つかりませんでした。\n\n検索のヒント:\n• 「忌部」「阿波」「神社」「古代」などのキーワードを試してください\n• 複数の単語で検索する場合はスペースで区切ってください`);
+                return;
+            }
+
+            const modal = document.getElementById('searchModal');
+            const title = document.getElementById('searchResultsTitle');
+            const body = document.getElementById('searchResultsBody');
+            
+            title.textContent = `"${query}" の検索結果 (${results.length}ページ)`;
+            
+            let bodyHTML = '';
+            
+            results.forEach((pageResult, pageIndex) => {
+                bodyHTML += `<div class="search-result-item">`;
+                bodyHTML += `<div class="result-title">${pageResult.pageTitle}</div>`;
+                bodyHTML += `<div class="result-score">総合関連度: ${'★'.repeat(Math.min(5, Math.ceil(pageResult.totalScore / 5)))}</div>`;
+                
+                // 各セクションの結果を表示
+                pageResult.results.slice(0, 3).forEach(sectionResult => {
+                    bodyHTML += `<div class="result-snippet">`;
+                    bodyHTML += `<h4>${sectionResult.title}</h4>`;
+                    
+                    let content = sectionResult.content;
+                    
+                    // 検索語をハイライト（修正版）
+                    const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
+                    console.log('ハイライト対象語:', searchTerms);
+
+                    let highlightedContent = content;
+
+                    searchTerms.forEach(term => {
+                        // 特殊文字をエスケープ
+                        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                        highlightedContent = highlightedContent.replace(regex, '<mark>$1</mark>');
+                    });
+
+                    content = highlightedContent;
+                    console.log('ハイライト後:', content.includes('<mark>') ? 'ハイライト適用済み' : 'ハイライトなし');
+                    
+                    // 内容を適切な長さに切り詰め（HTMLタグを考慮）
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content;
+                    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+
+                    if (textContent.length > 300) {
+                        // プレーンテキストで300文字に制限してから、再度ハイライト適用
+                        const truncatedText = textContent.substring(0, 300) + '...';
+                        content = truncatedText;
+
+                        // 再度ハイライト適用
+                        searchTerms.forEach(term => {
+                            if (term.length > 1) {
+                                const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                                content = content.replace(regex, '<mark>$1</mark>');
+                            }
+                        });
+                    }
+                    
+                    bodyHTML += `<p>${content}</p>`;
+                    bodyHTML += `</div>`;
+                });
+                
+                // セクションリンクボタン
+                bodyHTML += `<div class="result-actions">`;
+                const topSection = pageResult.results[0];
+                if (pageResult.page !== 'index.html') {
+                    bodyHTML += `<button class="result-action-btn" onclick="navigateToSection('${pageResult.page}', '${topSection.sectionId || ''}')">該当セクションを開く</button>`;
+                    bodyHTML += `<button class="result-action-btn secondary" onclick="navigateToPage('${pageResult.page}')">ページ全体を開く</button>`;
+                } else {
+                    bodyHTML += `<button class="result-action-btn" onclick="navigateToSection('${pageResult.page}', '${topSection.sectionId || ''}')">該当セクションへ移動</button>`;
+                }
+                bodyHTML += `</div>`;
+                bodyHTML += `</div>`;
+            });
+            
+            body.innerHTML = bodyHTML;
+            modal.style.display = 'flex';
+        }
+
+        function navigateToPage(page) {
+            console.log('ページ遷移:', page);
+            closeSearchModal();
+            window.location.href = page;
+        }
+
+        function navigateToSection(page, sectionId) {
+            console.log('セクション遷移:', page, sectionId);
+            closeSearchModal();
+
+            if (page === 'index.html' && sectionId) {
+                // 同じページ内のセクションへ移動
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    console.warn('セクションが見つかりません:', sectionId);
+                }
+            } else if (sectionId) {
+                // 他のページのセクションへ移動
+                window.location.href = `${page}#${sectionId}`;
+            } else {
+                // セクションIDがない場合はページのトップへ
+                window.location.href = page;
+            }
+        }
+
+        function copySearchResult(title) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(title).then(() => {
+                    // 簡単なフィードバック
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = 'コピー完了!';
+                    button.style.background = '#48bb78';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '#e2e8f0';
+                    }, 1000);
+                });
+            }
+        }
+
+        function closeSearchModal() {
+            document.getElementById('searchModal').style.display = 'none';
+        }
+
+        function performSearchAction() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                console.log('検索クエリ:', query);
+                const results = performSearch(query);
+                console.log('検索結果:', results);
+                displaySearchResults(results, query);
+            } else {
+                alert('検索キーワードを入力してください。');
+            }
+        }
+
+        // 検索機能のイベントリスナー
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearchAction();
+            }
+        });
+
+        // モーダル外クリックで閉じる
+        document.getElementById('searchModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSearchModal();
+            }
+        });
+
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSearchModal();
+            }
+        });
+
+        // フェードインアニメーション
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // パララックス効果
+        function parallaxEffect() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const heroHeight = hero ? hero.offsetHeight : 0;
+
+            if (hero && scrolled <= heroHeight) {
+                const rate = scrolled * 0.5;
+                const heroBackground = hero.querySelector('.hero-bg') ||
+                    (() => {
+                        const bg = document.createElement('div');
+                        bg.className = 'hero-bg';
+                        bg.style.cssText = `
+                            position: absolute;
+                            top: -20%;
+                            left: 0;
+                            right: 0;
+                            bottom: -20%;
+                            background: linear-gradient(135deg, rgba(26, 32, 44, 0.3) 0%, rgba(45, 55, 72, 0.2) 50%, rgba(26, 32, 44, 0.35) 100%), url('images/ooawa-hero.jpeg');
+                            background-size: cover;
+                            background-position: center center;
+                            background-repeat: no-repeat;
+                            z-index: -1;
+                            will-change: transform;
+                        `;
+                        hero.appendChild(bg);
+                        return bg;
+                    })();
+
+                heroBackground.style.transform = `translateY(${rate}px)`;
+            }
+        }
+
+        window.addEventListener('scroll', parallaxEffect);
+        window.addEventListener('resize', parallaxEffect);
+
+        // ヒーローから次のセクションへのスムーズスクロール
+        function scrollToContent() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // スムーズスクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

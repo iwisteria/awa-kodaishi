@@ -1,8 +1,10 @@
 {{ define "main" }}
 <div class="container">
-    <header class="hero fade-in">
+    <header class="page-header fade-in">
         <h1>{{ .Title }}</h1>
-        <p class="subtitle">{{ .Params.subtitle | default "阿波古代史を詳しく調査した研究" }}</p>
+        {{ if .Params.subtitle }}
+        <p class="subtitle">{{ .Params.subtitle }}</p>
+        {{ end }}
     </header>
 
     <nav class="nav-menu fade-in">
@@ -81,5 +83,137 @@
             }
         });
     });
+
+    // 検索ワードハイライト機能
+    let currentHighlightIndex = 0;
+    let highlightElements = [];
+
+    function highlightSearchTerms() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('highlight');
+
+        if (searchQuery) {
+            const searchTerms = searchQuery.toLowerCase().split(/\s+/).filter(term => term.length > 1);
+            const contentArea = document.querySelector('.content');
+
+            if (contentArea && searchTerms.length > 0) {
+                const walker = document.createTreeWalker(
+                    contentArea,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+
+                const textNodes = [];
+                let node;
+                while (node = walker.nextNode()) {
+                    textNodes.push(node);
+                }
+
+                textNodes.forEach(textNode => {
+                    let text = textNode.textContent;
+                    let hasMatch = false;
+
+                    searchTerms.forEach(term => {
+                        const regex = new RegExp(term, 'gi');
+                        if (regex.test(text)) {
+                            hasMatch = true;
+                            text = text.replace(regex, `<mark class="search-highlight">$&</mark>`);
+                        }
+                    });
+
+                    if (hasMatch) {
+                        const span = document.createElement('span');
+                        span.innerHTML = text;
+                        textNode.parentNode.replaceChild(span, textNode);
+                    }
+                });
+
+                // ハイライト要素を収集
+                highlightElements = Array.from(document.querySelectorAll('.search-highlight'));
+
+                if (highlightElements.length > 0) {
+                    // 各ハイライト要素にインデックスを追加
+                    highlightElements.forEach((element, index) => {
+                        element.setAttribute('data-highlight-index', index);
+                    });
+
+                    // 最初のハイライト箇所にスクロールして強調
+                    setTimeout(() => {
+                        scrollToHighlight(0);
+                        showHighlightInfo();
+                    }, 500);
+
+                    // Enterキーでの移動機能を有効化
+                    enableHighlightNavigation();
+                }
+            }
+        }
+    }
+
+    function scrollToHighlight(index) {
+        if (highlightElements.length === 0) return;
+
+        // 前の現在位置の強調を解除
+        const prevElement = highlightElements[currentHighlightIndex];
+        if (prevElement) {
+            prevElement.classList.remove('current-highlight');
+        }
+
+        // 新しい現在位置を設定
+        currentHighlightIndex = index;
+        const currentElement = highlightElements[currentHighlightIndex];
+
+        if (currentElement) {
+            currentElement.classList.add('current-highlight');
+            currentElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }
+
+    function showHighlightInfo() {
+        if (highlightElements.length > 1) {
+            // ハイライト情報を表示するバナーを作成
+            const infoBanner = document.createElement('div');
+            infoBanner.id = 'highlight-info';
+            infoBanner.innerHTML = `
+                <span>ハイライト ${currentHighlightIndex + 1} / ${highlightElements.length}</span>
+                <span>Enterキーで次へ移動</span>
+                <button onclick="closeHighlightInfo()">&times;</button>
+            `;
+            document.body.appendChild(infoBanner);
+        }
+    }
+
+    function enableHighlightNavigation() {
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && highlightElements.length > 1) {
+                e.preventDefault();
+                const nextIndex = (currentHighlightIndex + 1) % highlightElements.length;
+                scrollToHighlight(nextIndex);
+                updateHighlightInfo();
+            }
+        });
+    }
+
+    function updateHighlightInfo() {
+        const infoBanner = document.getElementById('highlight-info');
+        if (infoBanner) {
+            const span = infoBanner.querySelector('span');
+            span.textContent = `ハイライト ${currentHighlightIndex + 1} / ${highlightElements.length}`;
+        }
+    }
+
+    function closeHighlightInfo() {
+        const infoBanner = document.getElementById('highlight-info');
+        if (infoBanner) {
+            infoBanner.remove();
+        }
+    }
+
+    // ページ読み込み時にハイライト実行
+    highlightSearchTerms();
 </script>
 {{ end }}
