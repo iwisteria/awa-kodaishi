@@ -2,11 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no, email=no, address=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
     <title>奈良県・京都府における阿波関連地名と神社の歴史的起源 - 阿波古代史をAIに調査してもらった</title>
     <style>
         * {
@@ -18,7 +22,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
                          'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
-                         Meiryo, sans-serif;
+                         'Yu Gothic Medium', 'Yu Gothic', YuGothic,
+                         'Noto Sans CJK JP', 'Noto Sans JP',
+                         Meiryo, 'MS PGothic', sans-serif;
             font-size: 1rem;
             line-height: 1.7;
             font-weight: 400;
@@ -71,9 +77,17 @@
 
         .nav-menu ul {
             list-style: none;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
             display: flex;
+            -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
             flex-wrap: wrap;
             gap: 12px;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
             justify-content: center;
         }
 
@@ -221,19 +235,35 @@
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
             gap: 24px;
             margin: 32px 0;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
         }
 
         .stat-card {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1 1 200px;
+            -ms-flex: 1 1 200px;
+            flex: 1 1 200px;
+            min-width: 200px;
+            max-width: 300px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
             padding: 32px 24px;
             text-align: center;
             border-radius: 8px;
             transition: all 0.2s ease;
+            -webkit-transition: all 0.2s ease;
         }
 
         .stat-card:hover {
@@ -301,26 +331,43 @@
             .hero h1 {
                 font-size: 2rem;
             }
-            
+
             .hero {
                 padding: 40px 20px;
             }
-            
+
             .content {
                 padding: 24px;
             }
-            
+
             .container {
                 padding: 20px 16px;
             }
-            
+
             .nav-menu ul {
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                -ms-flex-direction: column;
                 flex-direction: column;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
                 align-items: center;
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                -ms-flex-direction: column;
+                flex-direction: column;
+            }
+
+            .stat-card {
+                width: 100%;
+                max-width: none;
+                min-width: auto;
             }
         }
     </style>
@@ -515,123 +562,163 @@
     </div>
 
     <script>
+        // エラー処理とデバッグ用
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.log('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            return false;
+        };
+
         // フェードインアニメーション（Intersection Observer対応とフォールバック）
         document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.fade-in');
+            try {
+                var elements = document.querySelectorAll('.fade-in');
 
-            // Intersection Observer API がサポートされているかチェック
-            if ('IntersectionObserver' in window) {
-                const observer = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, {
-                    threshold: 0.1,
-                    rootMargin: '0px 0px -50px 0px'
-                });
-
-                elements.forEach(function(el) {
-                    observer.observe(el);
-                });
-            } else {
-                // Intersection Observer がサポートされていない場合のフォールバック
-                function checkVisibility() {
-                    elements.forEach(function(el) {
-                        if (!el.classList.contains('visible')) {
-                            var rect = el.getBoundingClientRect();
-                            var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-                            if (rect.top < windowHeight - 50) {
-                                el.classList.add('visible');
+                // Intersection Observer API がサポートされているかチェック
+                if ('IntersectionObserver' in window) {
+                    var observer = new IntersectionObserver(function(entries) {
+                        for (var i = 0; i < entries.length; i++) {
+                            var entry = entries[i];
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
                             }
                         }
+                    }, {
+                        threshold: 0.1,
+                        rootMargin: '0px 0px -50px 0px'
                     });
+
+                    for (var i = 0; i < elements.length; i++) {
+                        observer.observe(elements[i]);
+                    }
+                } else {
+                    // Intersection Observer がサポートされていない場合のフォールバック
+                    function checkVisibility() {
+                        for (var i = 0; i < elements.length; i++) {
+                            var el = elements[i];
+                            if (!el.classList.contains('visible')) {
+                                var rect = el.getBoundingClientRect();
+                                var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+                                if (rect.top < windowHeight - 50) {
+                                    el.classList.add('visible');
+                                }
+                            }
+                        }
+                    }
+
+                    // 初期チェック
+                    checkVisibility();
+
+                    // スクロール時にチェック
+                    var scrollTimer = null;
+                    window.addEventListener('scroll', function() {
+                        if (scrollTimer) clearTimeout(scrollTimer);
+                        scrollTimer = setTimeout(checkVisibility, 10);
+                    }, { passive: true });
                 }
-
-                // 初期チェック
-                checkVisibility();
-
-                // スクロール時にチェック
-                var scrollTimer = null;
-                window.addEventListener('scroll', function() {
-                    if (scrollTimer) clearTimeout(scrollTimer);
-                    scrollTimer = setTimeout(checkVisibility, 10);
-                }, { passive: true });
+            } catch (e) {
+                console.log('Fade-in animation error:', e);
+                // フォールバック：すべての要素を即座に表示
+                var elements = document.querySelectorAll('.fade-in');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].classList.add('visible');
+                }
             }
         });
 
         // スクロールトップボタン
-        var scrollTopButton = document.querySelector('.scroll-top');
-        var scrollTopTimer = null;
+        try {
+            var scrollTopButton = document.querySelector('.scroll-top');
+            var scrollTopTimer = null;
 
-        window.addEventListener('scroll', function() {
-            if (scrollTopTimer) clearTimeout(scrollTopTimer);
-            scrollTopTimer = setTimeout(function() {
-                var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                if (scrollY > 300) {
-                    scrollTopButton.style.display = 'block';
-                } else {
-                    scrollTopButton.style.display = 'none';
-                }
-            }, 10);
-        }, { passive: true });
+            if (scrollTopButton) {
+                window.addEventListener('scroll', function() {
+                    if (scrollTopTimer) clearTimeout(scrollTopTimer);
+                    scrollTopTimer = setTimeout(function() {
+                        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                        if (scrollY > 300) {
+                            scrollTopButton.style.display = 'block';
+                        } else {
+                            scrollTopButton.style.display = 'none';
+                        }
+                    }, 10);
+                }, { passive: true });
+            }
+        } catch (e) {
+            console.log('Scroll button error:', e);
+        }
 
         function scrollToTop() {
-            // スムーズスクロール対応チェック
-            if ('scrollBehavior' in document.documentElement.style) {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            } else {
-                // フォールバック：簡易アニメーション
-                var currentY = window.pageYOffset || document.documentElement.scrollTop;
-                var targetY = 0;
-                var distance = currentY - targetY;
-                var duration = 500;
-                var start = Date.now();
+            try {
+                // スムーズスクロール対応チェック
+                if ('scrollBehavior' in document.documentElement.style) {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    // フォールバック：簡易アニメーション
+                    var currentY = window.pageYOffset || document.documentElement.scrollTop;
+                    var targetY = 0;
+                    var distance = currentY - targetY;
+                    var duration = 500;
+                    var start = Date.now();
 
-                function easeInOutQuart(t) {
-                    return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-                }
+                    function easeInOutQuart(t) {
+                        return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
+                    }
 
-                function animateScroll() {
-                    var elapsed = Date.now() - start;
-                    var progress = Math.min(elapsed / duration, 1);
-                    var easeProgress = easeInOutQuart(progress);
+                    function animateScroll() {
+                        var elapsed = Date.now() - start;
+                        var progress = Math.min(elapsed / duration, 1);
+                        var easeProgress = easeInOutQuart(progress);
 
-                    window.scrollTo(0, currentY - (distance * easeProgress));
+                        window.scrollTo(0, currentY - (distance * easeProgress));
 
-                    if (progress < 1) {
-                        requestAnimationFrame(animateScroll);
+                        if (progress < 1 && window.requestAnimationFrame) {
+                            requestAnimationFrame(animateScroll);
+                        }
+                    }
+
+                    if (window.requestAnimationFrame) {
+                        animateScroll();
+                    } else {
+                        window.scrollTo(0, 0);
                     }
                 }
-
-                animateScroll();
+            } catch (e) {
+                console.log('Scroll to top error:', e);
+                window.scrollTo(0, 0);
             }
         }
 
         // スムーズスクロール
-        var anchors = document.querySelectorAll('a[href^="#"]');
-        for (var i = 0; i < anchors.length; i++) {
-            anchors[i].addEventListener('click', function (e) {
-                e.preventDefault();
-                var targetId = this.getAttribute('href');
-                var target = document.querySelector(targetId);
-                if (target) {
-                    if ('scrollBehavior' in document.documentElement.style) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    } else {
-                        // フォールバック
-                        var targetPosition = target.offsetTop;
-                        window.scrollTo(0, targetPosition);
+        try {
+            var anchors = document.querySelectorAll('a[href^="#"]');
+            for (var i = 0; i < anchors.length; i++) {
+                anchors[i].addEventListener('click', function (e) {
+                    try {
+                        e.preventDefault();
+                        var targetId = this.getAttribute('href');
+                        var target = document.querySelector(targetId);
+                        if (target) {
+                            if ('scrollBehavior' in document.documentElement.style) {
+                                target.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                            } else {
+                                // フォールバック
+                                var targetPosition = target.offsetTop;
+                                window.scrollTo(0, targetPosition);
+                            }
+                        }
+                    } catch (err) {
+                        console.log('Anchor scroll error:', err);
                     }
-                }
-            });
+                });
+            }
+        } catch (e) {
+            console.log('Anchor setup error:', e);
         }
     </script>
 </body>
