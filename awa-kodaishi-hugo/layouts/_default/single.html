@@ -1,26 +1,19 @@
 {{ define "main" }}
-<div class="container">
-    <!-- ヒーローセクション -->
-    <header class="hero fade-in" style="background: #ffffff; color: #1a202c; padding: 40px;">
+<article class="single-post">
+    <header class="post-header">
         <h1>{{ .Title }}</h1>
         {{ if .Params.subtitle }}
         <p class="subtitle">{{ .Params.subtitle }}</p>
         {{ end }}
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006年1月2日" }}</time>
     </header>
 
-    <!-- ナビゲーション -->
-    <nav class="nav-menu fade-in">
-        <!-- 既存サイトと同じナビゲーション構造 -->
-    </nav>
-
-    <!-- メインコンテンツ -->
-    <main class="content fade-in">
+    <div class="post-content">
         {{ .Content }}
-    </main>
-</div>
+    </div>
 
-<!-- JavaScript -->
-<script>
-    <!-- 既存のJavaScript機能 -->
-</script>
+    <nav class="post-nav">
+        <a href="/">&larr; トップページに戻る</a>
+    </nav>
+</article>
 {{ end }}
