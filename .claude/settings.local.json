@@ -9,7 +9,16 @@
       "Bash(hugo:*)",
       "Bash(pkill:*)",
       "Bash(git restore:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(cat:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run serve:*)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote add:*)"
     ],
     "deny": [],
     "ask": []
