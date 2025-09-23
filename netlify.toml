@@ -5,8 +5,10 @@
 [build.environment]
   NODE_VERSION = "18"
 
-# リダイレクト設定（必要に応じて）
+# SPAルーティング用のリダイレクト設定
+# 存在しないページのみをindex.htmlにリダイレクト
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 404
+  status = 200
+  force = false
