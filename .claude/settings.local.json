@@ -21,7 +21,9 @@
       "Bash(git remote add:*)",
       "Bash(rm:*)",
       "Bash(sips:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)"
     ],
     "deny": [],
     "ask": []
