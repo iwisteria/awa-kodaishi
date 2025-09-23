@@ -44,15 +44,6 @@ body {
     margin-right: -50vw;
     margin-bottom: 40px;
     overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    left: 0;
-    right: 0;
-    bottom: -20%;
     background: linear-gradient(135deg, rgba(26, 32, 44, 0.3) 0%, rgba(45, 55, 72, 0.2) 50%, rgba(26, 32, 44, 0.35) 100%),
                 url('/images/ooawa-hero.jpeg');
     background-size: cover;
@@ -60,8 +51,6 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     will-change: transform;
-    transform: translateY(var(--scroll, 0px));
-    z-index: -1;
 }
 
 .hero h1 {

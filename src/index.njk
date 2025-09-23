@@ -169,14 +169,31 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
 });
 
 // パララックス効果
-window.addEventListener('scroll', function() {
-    const hero = document.getElementById('hero');
-    const scrolled = window.pageYOffset;
-    const parallax = hero.querySelector('::before');
+let ticking = false;
 
-    // パフォーマンスのため requestAnimationFrame を使用
-    requestAnimationFrame(function() {
-        hero.style.setProperty('--scroll', scrolled * 0.5 + 'px');
-    });
-});
+function updateParallax() {
+    const scrolled = window.pageYOffset;
+    const hero = document.getElementById('hero');
+
+    if (hero) {
+        // ヒーロー要素の高さを取得
+        const heroHeight = hero.offsetHeight;
+        const scrolledPercent = scrolled / heroHeight;
+
+        // 背景を少し遅く動かす（0.5倍速）
+        const yPos = -(scrolled * 0.5);
+        hero.style.backgroundPosition = `center ${yPos}px`;
+    }
+
+    ticking = false;
+}
+
+function requestTick() {
+    if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+    }
+}
+
+window.addEventListener('scroll', requestTick);
 </script>
