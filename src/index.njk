@@ -1,0 +1,170 @@
+---
+layout: base.njk
+title: 阿波古代史をAIに調査してもらった
+isHome: true
+---
+
+<div class="container">
+    <header class="hero" id="hero">
+        <div class="hero-content">
+            <h1>阿波古代史をAIに調査してもらった</h1>
+            <p>古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト</p>
+        </div>
+        <div class="hero-caption">
+            上一宮大粟神社
+        </div>
+        <div class="hero-scroll-indicator" onclick="scrollToContent()">
+            ↓
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="/" class="active">トップページ</a></li>
+            <li><a href="/posts/nara-kyoto-awa/">奈良・京都の阿波関連地名</a></li>
+            <li><a href="/posts/harifu-shrine/">波爾布神社と阿波</a></li>
+            <li><a href="#about">このサイトについて</a></li>
+        </ul>
+    </nav>
+
+    <section class="search-section">
+        <h2 style="text-align: center; margin-bottom: 20px; border: none; padding: 0;">サイト内検索</h2>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="キーワードを入力してサイト内を検索..." />
+            <button class="search-button" onclick="performSearchAction()">検索</button>
+        </div>
+        <p class="search-note">※ 地名、神社名、人名、時代名などで検索できます</p>
+    </section>
+
+    <section class="content">
+        <h2>研究テーマ一覧</h2>
+        <p>古代阿波国に関する歴史的謎について、AI技術を活用した多角的な調査・分析を行っています。</p>
+
+        <div class="themes-grid">
+            <a href="/posts/nara-kyoto-awa/" class="theme-card">
+                <h4>奈良県・京都府における阿波関連地名と神社の歴史的起源</h4>
+                <p>畿内地域に点在する阿波関連の地名や神社について、その分布パターンと歴史的背景を詳細に調査。古代における阿波国と中央政権との関係性を地理的・宗教的観点から解明します。</p>
+                <span class="theme-status">調査完了</span>
+            </a>
+
+            <a href="/posts/harifu-shrine/" class="theme-card">
+                <h4>波爾布神社と阿波の歴史的宗教的結合</h4>
+                <p>波爾布神社の起源と阿波国との深い関連性について、祭神、創建伝承、文献史料を総合的に分析。古代阿波の宗教的アイデンティティと神社信仰の発展過程を探究します。</p>
+                <span class="theme-status">調査完了</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="content" id="about">
+        <h2>このサイトについて</h2>
+
+        <div class="info-box">
+            <h4>🤖 AI活用による歴史研究の新しいアプローチ</h4>
+            <p>このサイトでは、Claude（Anthropic社製AI）を研究パートナーとして、古代阿波国の歴史的謎に取り組んでいます。従来の文献史学に加え、AI技術による大量データの分析と新たな視点の提供により、これまで見過ごされていた歴史的連関の発見を目指しています。</p>
+        </div>
+
+        <h3>研究方法と特徴</h3>
+        <p>各研究テーマにおいて以下のアプローチを採用しています：</p>
+        <ul>
+            <li><strong>多角的文献調査</strong> - 古代から近世までの史料を横断的に分析</li>
+            <li><strong>地理的分布分析</strong> - GIS的手法による地名・神社の空間的パターン解析</li>
+            <li><strong>比較宗教史的考察</strong> - 他地域との宗教的伝承の比較検討</li>
+            <li><strong>AI支援による仮説生成</strong> - 人間では気づきにくい関連性の発見</li>
+        </ul>
+    </section>
+</div>
+
+<div class="search-results-modal" id="searchModal">
+    <div class="search-results-content">
+        <div class="search-results-header">
+            <button class="close-button" onclick="closeSearchModal()">&times;</button>
+            <h3 id="searchResultsTitle">検索結果</h3>
+        </div>
+        <div id="searchResultsBody">
+        </div>
+    </div>
+</div>
+
+<script>
+function scrollToContent() {
+    const navMenu = document.querySelector('.nav-menu');
+    navMenu.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+const searchData = {
+    'index.html': {
+        title: 'トップページ - 阿波古代史をAIに調査してもらった',
+        content: '阿波古代史 AI調査 研究 古代阿波国 歴史的謎 多角的調査 分析 奈良県 京都府 阿波関連地名 神社 波爾布神社 宗教的結合'
+    },
+    'posts/nara-kyoto-awa/index.html': {
+        title: '奈良県・京都府における阿波関連地名と神社の歴史的起源',
+        content: '奈良県 京都府 阿波関連地名 神社 歴史的起源 畿内地域 分布パターン 古代阿波国 中央政権 関係性 地理的 宗教的'
+    },
+    'posts/harifu-shrine/index.html': {
+        title: '波爾布神社と阿波の歴史的宗教的結合',
+        content: '波爾布神社 阿波 歴史的 宗教的結合 祭神 創建伝承 文献史料 古代阿波 宗教的アイデンティティ 神社信仰'
+    }
+};
+
+function performSearchAction() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    if (!query) {
+        alert('検索キーワードを入力してください');
+        return;
+    }
+
+    const results = [];
+    for (const [url, data] of Object.entries(searchData)) {
+        if (data.title.toLowerCase().includes(query) || data.content.toLowerCase().includes(query)) {
+            results.push({
+                title: data.title,
+                url: '/' + url.replace('/index.html', '/').replace('index.html', '')
+            });
+        }
+    }
+
+    displaySearchResults(query, results);
+}
+
+function displaySearchResults(query, results) {
+    const modal = document.getElementById('searchModal');
+    const title = document.getElementById('searchResultsTitle');
+    const body = document.getElementById('searchResultsBody');
+
+    title.textContent = `「${query}」の検索結果 (${results.length}件)`;
+
+    if (results.length === 0) {
+        body.innerHTML = '<p class="no-results">該当する記事が見つかりませんでした。</p>';
+    } else {
+        body.innerHTML = results.map(result =>
+            `<div class="search-result-item">
+                <a href="${result.url}">${result.title}</a>
+            </div>`
+        ).join('');
+    }
+
+    modal.style.display = 'block';
+}
+
+function closeSearchModal() {
+    document.getElementById('searchModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('searchModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        performSearchAction();
+    }
+});
+</script>

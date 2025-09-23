@@ -1,0 +1,35 @@
+---
+layout: base.njk
+---
+
+<div class="container">
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="/">トップページ</a></li>
+            <li><a href="/posts/nara-kyoto-awa/">奈良・京都の阿波関連地名</a></li>
+            <li><a href="/posts/harifu-shrine/">波爾布神社と阿波</a></li>
+            <li><a href="/#about">このサイトについて</a></li>
+        </ul>
+    </nav>
+
+    <article class="content post-content">
+        <header class="post-header">
+            <h1>{{ title }}</h1>
+            {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
+            {% if highlight %}<div class="highlight">{{ highlight }}</div>{% endif %}
+        </header>
+
+        <div class="post-body">
+            {{ content | safe }}
+        </div>
+
+        <footer class="post-footer">
+            <div class="back-to-top">
+                <a href="#top">ページトップへ戻る</a>
+            </div>
+            <div class="navigation-links">
+                <a href="/">← トップページに戻る</a>
+            </div>
+        </footer>
+    </article>
+</div>

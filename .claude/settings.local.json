@@ -18,7 +18,10 @@
       "Bash(npm run serve:*)",
       "Bash(git init:*)",
       "Bash(git branch:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(rm:*)",
+      "Bash(sips:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

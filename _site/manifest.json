@@ -1,0 +1,21 @@
+{
+  "name": "阿波古代史をAIに調査してもらった",
+  "short_name": "阿波古代史AI調査",
+  "description": "古代阿波国の歴史的謎をAI技術を活用して多角的に調査・分析した研究サイト",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4299e1",
+  "icons": [
+    {
+      "src": "/images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
