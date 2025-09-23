@@ -23,7 +23,8 @@
       "Bash(sips:*)",
       "Bash(tree:*)",
       "Bash(lsof:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "WebFetch(domain:awa-kodaishi-11ty.netlify.app)"
     ],
     "deny": [],
     "ask": []

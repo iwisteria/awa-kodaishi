@@ -1,0 +1,17 @@
+# Static files headers
+/manifest.json
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
+
+/css/*
+  Content-Type: text/css
+  Cache-Control: public, max-age=31536000
+
+/images/*
+  Cache-Control: public, max-age=31536000
+
+# Default headers for all files
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
