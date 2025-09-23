@@ -205,6 +205,18 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
         performSearchAction();
     }
 });
+
+// パララックス効果
+window.addEventListener('scroll', function() {
+    const hero = document.getElementById('hero');
+    const scrolled = window.pageYOffset;
+    const parallax = hero.querySelector('::before');
+
+    // パフォーマンスのため requestAnimationFrame を使用
+    requestAnimationFrame(function() {
+        hero.style.setProperty('--scroll', scrolled * 0.5 + 'px');
+    });
+});
 </script>
 </body>
 </html>

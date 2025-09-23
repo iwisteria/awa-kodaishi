@@ -58,7 +58,9 @@ body {
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     will-change: transform;
+    transform: translateY(var(--scroll, 0px));
     z-index: -1;
 }
 
