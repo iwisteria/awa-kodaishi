@@ -821,7 +821,7 @@ li {
 .form-group input,
 .form-group select,
 .form-group textarea {
-    width: 100%;
+    width: 50%;
     padding: 20px 24px;
     font-size: 1rem;
     border: 2px solid #e2e8f0;
