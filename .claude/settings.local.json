@@ -24,7 +24,8 @@
       "Bash(tree:*)",
       "Bash(lsof:*)",
       "Bash(kill:*)",
-      "WebFetch(domain:awa-kodaishi-11ty.netlify.app)"
+      "WebFetch(domain:awa-kodaishi-11ty.netlify.app)",
+      "Read(//Users/mflmacmini20141227/Desktop/**)"
     ],
     "deny": [],
     "ask": []
