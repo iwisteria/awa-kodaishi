@@ -1,8 +1,8 @@
 ---
 layout: post.njk
 date: 2025-09-24T15:30:00+09:00
-title: 阿波古代史研究プロジェクト統合調査報告書（完全版）
-subtitle: 千葉房総・関東一円における阿波文化伝播の包括的分析
+title: 千葉房総・関東一円における阿波文化伝播の包括的分析
+subtitle: 阿波古代史研究プロジェクト統合調査報告書（完全版）
 highlight: 複数の独立した証拠体系による古代文化伝播現象の解明
 permalink: /posts/awa-integrated-research-report/
 ---
