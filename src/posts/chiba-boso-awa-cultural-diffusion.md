@@ -4,7 +4,7 @@ date: 2025-09-24T15:30:00+09:00
 title: 千葉房総・関東一円における阿波文化伝播の包括的分析
 subtitle: 複数の独立した証拠体系による古代文化伝播現象の解明
 highlight: 
-permalink: /posts/awa-integrated-research-report/
+permalink: /posts/chiba-boso-awa-cultural-diffusion/
 ---
 
 # 千葉房総・関東一円における阿波文化伝播の包括的分析
