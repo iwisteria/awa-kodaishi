@@ -23,6 +23,7 @@ isHome: true
             <li><a href="/" class="active">トップページ</a></li>
             <li><a href="#themes">研究テーマ一覧</a></li>
             <li><a href="#about">このサイトについて</a></li>
+            <li><a href="#contact">お問い合わせ</a></li>
         </ul>
     </nav>
 
@@ -88,6 +89,54 @@ isHome: true
                 <li><strong>現住所：</strong>東京都在住</li>
             </ul>
         </div>
+    </section>
+
+    <section class="content" id="contact">
+        <h2>お問い合わせ</h2>
+
+        <div class="info-box">
+            <h4>📧 研究に関するご質問・ご意見をお聞かせください</h4>
+            <p>阿波古代史研究や本サイトの内容について、ご質問やご意見がございましたらお気軽にお問い合わせください。学術的な議論や新しい情報のご提供もお待ちしています。</p>
+        </div>
+
+        <form name="contact" method="POST" action="/success" data-netlify="true" data-netlify-honeypot="bot-field" class="contact-form">
+            <input type="hidden" name="form-name" value="contact">
+
+            <!-- Honeypot field for spam protection -->
+            <div style="display: none;">
+                <label>Don't fill this out if you're human: <input name="bot-field"></label>
+            </div>
+
+            <div class="form-group">
+                <label for="name">お名前 <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">メールアドレス <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">件名</label>
+                <select id="subject" name="subject">
+                    <option value="">選択してください</option>
+                    <option value="研究内容について">研究内容について</option>
+                    <option value="史料・情報提供">史料・情報提供</option>
+                    <option value="サイトの不具合">サイトの不具合</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">メッセージ <span class="required">*</span></label>
+                <textarea id="message" name="message" rows="6" required placeholder="ご質問やご意見をお聞かせください..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="contact-button">送信する</button>
+            </div>
+        </form>
     </section>
 </div>
 
