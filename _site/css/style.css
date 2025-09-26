@@ -42,7 +42,7 @@ body {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    margin-bottom: 40px;
+    margin-bottom: 0;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(26, 32, 44, 0.3) 0%, rgba(45, 55, 72, 0.2) 50%, rgba(26, 32, 44, 0.35) 100%),
                 url('/images/ooawa-hero.jpeg');
