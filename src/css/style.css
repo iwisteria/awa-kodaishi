@@ -71,7 +71,7 @@ body {
 
 .hero-caption {
     position: absolute;
-    bottom: 60px;
+    bottom: 20px;
     right: 30px;
     color: rgba(255, 255, 255, 0.9);
     font-size: 0.9rem;
