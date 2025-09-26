@@ -767,6 +767,13 @@ li {
         padding: 20px 16px;
     }
 
+    .hero-caption {
+        bottom: 20px;
+        right: 16px;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
     .nav-menu ul {
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
