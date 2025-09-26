@@ -61,6 +61,7 @@
             <li><a href="/" class="active">トップページ</a></li>
             <li><a href="#themes">研究テーマ一覧</a></li>
             <li><a href="#about">このサイトについて</a></li>
+            <li><a href="#contact">お問い合わせ</a></li>
         </ul>
     </nav>
 
@@ -82,19 +83,28 @@
             <a href="/posts/chiba-boso-awa-cultural-diffusion/" class="theme-card">
                 <h4>千葉房総・関東一円における阿波文化伝播の包括的分析</h4>
                 <p>古代阿波国から関東地方への文化伝播について、史料・考古学・神社分布の複数の独立した証拠体系により包括的に分析した統合調査報告書です。</p>
-                <span class="theme-status">調査完了</span>
+                <div class="update-info">
+                    <span class="theme-status">最終更新：2025/09/25</span>
+                    <p class="update-summary">初回公開</p>
+                </div>
             </a>
 
             <a href="/posts/nara-kyoto-awa/" class="theme-card">
                 <h4>奈良県・京都府における阿波関連地名と神社の歴史的起源</h4>
                 <p>畿内地域に点在する阿波関連の地名や神社について、その分布パターンと歴史的背景を詳細に調査。古代における阿波国と中央政権との関係性を地理的・宗教的観点から解明します。</p>
-                <span class="theme-status">調査完了</span>
+                <div class="update-info">
+                    <span class="theme-status">最終更新：2025/09/25</span>
+                    <p class="update-summary">初回公開</p>
+                </div>
             </a>
 
             <a href="/posts/harifu-shrine/" class="theme-card">
                 <h4>波爾布神社と阿波の歴史的宗教的結合</h4>
                 <p>波爾布神社の起源と阿波国との深い関連性について、祭神、創建伝承、文献史料を総合的に分析。古代阿波の宗教的アイデンティティと神社信仰の発展過程を探究します。</p>
-                <span class="theme-status">調査完了</span>
+                <div class="update-info">
+                    <span class="theme-status">最終更新：2025/09/25</span>
+                    <p class="update-summary">初回公開</p>
+                </div>
             </a>
         </div>
     </section>
@@ -126,6 +136,56 @@
                 <li><strong>現住所：</strong>東京都在住</li>
             </ul>
         </div>
+    </section>
+
+    <section class="content" id="contact">
+        <h2>お問い合わせ</h2>
+
+        <div class="info-box">
+            <h4>📧 研究に関するご質問・ご意見をお聞かせください</h4>
+            <p>阿波古代史研究や本サイトの内容について、ご質問やご意見がございましたらお気軽にお問い合わせください。学術的な議論や新しい情報のご提供も歓迎いたします。なお、お問い合わせの内容によっては、返信にお時間をいただく場合や返信できない場合もございますので、あらかじめご了承ください。</p>
+        </div>
+
+        <form name="contact" method="POST" action="/success" data-netlify="true" data-netlify-honeypot="bot-field" class="contact-form">
+            <input type="hidden" name="form-name" value="contact">
+
+            <!-- Honeypot field for spam protection -->
+            <div style="display: none;">
+                <label>Don't fill this out if you're human: <input name="bot-field"></label>
+            </div>
+
+            <div class="form-group">
+                <label for="name">お名前 <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">メールアドレス <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="example@mail.com">
+                <p style="color: #666; margin-top: 8px; margin-bottom: 0; font-size: 0.95rem;">※ ご入力いただいたメールアドレスは管理者のみが確認し、他の方に公開されることはありません。</p>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">件名</label>
+                <select id="subject" name="subject">
+                    <option value="">選択してください</option>
+                    <option value="研究内容について">研究内容について</option>
+                    <option value="史料・情報提供">史料・情報提供</option>
+                    <option value="サイトの不具合">サイトの不具合</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">メッセージ <span class="required">*</span></label>
+                <textarea id="message" name="message" rows="6" required placeholder="ご質問やご意見をお聞かせください..."></textarea>
+                <p style="color: #666; margin-top: 8px; margin-bottom: 0; font-size: 0.95rem;">※ 入力欄は必要に応じて大きくできます（右下のマークをドラッグしてください）。</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="contact-button">送信する</button>
+            </div>
+        </form>
     </section>
 </div>
 
