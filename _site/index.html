@@ -287,63 +287,63 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
     }
 });
 
-// パララックス効果
-let ticking = false;
+// パララックス効果を一時的に無効化
+// let ticking = false;
 
-function updateParallax() {
-    const scrolled = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
-    const hero = document.getElementById('hero');
+// function updateParallax() {
+//     const scrolled = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
+//     const hero = document.getElementById('hero');
 
-    if (hero) {
-        // デバッグ情報（本番環境では削除）
-        console.log('Scroll position:', scrolled);
+//     if (hero) {
+//         // デバッグ情報（本番環境では削除）
+//         console.log('Scroll position:', scrolled);
 
-        // 背景を少し遅く動かす（0.5倍速）
-        const yPos = -(scrolled * 0.5);
-        hero.style.backgroundPosition = `center ${yPos}px`;
+//         // 背景を少し遅く動かす（0.5倍速）
+//         const yPos = -(scrolled * 0.5);
+//         hero.style.backgroundPosition = `center ${yPos}px`;
 
-        // デバッグ情報（本番環境では削除）
-        console.log('Background position set to:', `center ${yPos}px`);
-    } else {
-        console.error('Hero element not found');
-    }
+//         // デバッグ情報（本番環境では削除）
+//         console.log('Background position set to:', `center ${yPos}px`);
+//     } else {
+//         console.error('Hero element not found');
+//     }
 
-    ticking = false;
-}
+//     ticking = false;
+// }
 
-function requestTick() {
-    if (!ticking) {
-        requestAnimationFrame(updateParallax);
-        ticking = true;
-    }
-}
+// function requestTick() {
+//     if (!ticking) {
+//         requestAnimationFrame(updateParallax);
+//         ticking = true;
+//     }
+// }
 
 // DOMが完全に読み込まれてからイベントリスナーを追加
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, setting up parallax');
-    const hero = document.getElementById('hero');
-    if (hero) {
-        console.log('Hero element found:', hero);
-        window.addEventListener('scroll', requestTick);
-        console.log('Scroll listener added');
-    } else {
-        console.error('Hero element not found on DOM load');
-    }
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//     console.log('DOM loaded, setting up parallax');
+//     const hero = document.getElementById('hero');
+//     if (hero) {
+//         console.log('Hero element found:', hero);
+//         window.addEventListener('scroll', requestTick);
+//         console.log('Scroll listener added');
+//     } else {
+//         console.error('Hero element not found on DOM load');
+//     }
+// });
 
 // フォールバック: DOMContentLoadedが既に発火している場合
-if (document.readyState === 'loading') {
-    // まだ読み込み中の場合は上記のイベントリスナーで処理
-} else {
-    // 既に読み込み済みの場合は即座に実行
-    console.log('DOM already loaded, setting up parallax immediately');
-    const hero = document.getElementById('hero');
-    if (hero) {
-        console.log('Hero element found:', hero);
-        window.addEventListener('scroll', requestTick);
-        console.log('Scroll listener added');
-    }
-}
+// if (document.readyState === 'loading') {
+//     // まだ読み込み中の場合は上記のイベントリスナーで処理
+// } else {
+//     // 既に読み込み済みの場合は即座に実行
+//     console.log('DOM already loaded, setting up parallax immediately');
+//     const hero = document.getElementById('hero');
+//     if (hero) {
+//         console.log('Hero element found:', hero);
+//         window.addEventListener('scroll', requestTick);
+//         console.log('Scroll listener added');
+//     }
+// }
 </script>
 </body>
 </html>
