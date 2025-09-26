@@ -28,8 +28,8 @@ body {
 }
 
 .hero {
-    height: 100vh;
-    min-height: 600px;
+    height: 83.33vh;
+    min-height: 500px;
     color: white;
     text-align: center;
     display: flex;

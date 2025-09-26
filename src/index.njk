@@ -266,6 +266,12 @@ function updateParallax() {
         // 背景を少し遅く動かす（0.3倍速に調整）
         const yPos = -(scrolled * 0.3);
         hero.style.backgroundPosition = `center ${yPos}px`;
+
+        // キャプションも同じスピードで動かす
+        const caption = hero.querySelector('.hero-caption');
+        if (caption) {
+            caption.style.transform = `translateY(${yPos}px)`;
+        }
     }
 
     ticking = false;
